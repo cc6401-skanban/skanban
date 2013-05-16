@@ -33,7 +33,7 @@ def angle_cos(p0, p1, p2):
     d1, d2 = (p0-p1).astype('float'), (p2-p1).astype('float')
     return abs( np.dot(d1, d2) / np.sqrt( np.dot(d1, d1)*np.dot(d2, d2) ) )
 
-im = cv2.imread('image.jpg')
+im = cv2.imread('image4.jpg')
 im = cv2.resize(im, (800,600))
 #a = np.asarray(im)
 #im = cv2.fromarray(a)
@@ -45,7 +45,7 @@ for gray in cv2.split(im):
 
     #imgray[imgray>250] = 0
     #im = binarizar(im, 155)
-    for thr in xrange(0, 255, 250):
+    for thr in xrange(0, 255, 25):
         #retval, imgray = cv2.threshold(gray, thr, 255, cv2.THRESH_BINARY)
         #imgray[imgray>thr] = 255
         #imgray[imgray<=thr] = 0
@@ -53,8 +53,9 @@ for gray in cv2.split(im):
 	if thr == 0:
             imgc2 = cv2.Canny(gray, 20,150,5)
 	else:
-	    retval, imgc2 = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
-	    #retval, imgc2 = cv2.threshold(gray,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+	    #retval, imgc2 = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+	    #retval, imgc2 = cv2.threshold(gray,thr,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+	    retval, imgc2 = cv2.threshold(gray,thr,255,cv2.THRESH_BINARY_INV)
 	    """
             img_bin = cv2.morphologyEx(imgc2, cv2.MORPH_OPEN, np.ones((3, 3), dtype=int))
 	
@@ -106,10 +107,10 @@ for gray in cv2.split(im):
                     squares.append(cnt)
     	        else:
     		    squares.append(cnt)
-                cv2.drawContours(im,[cnt],0,(255,0,255),3)
-    	        print cv2.contourArea(cnt), cnt
-                cv2.imshow("window", im)
-                cv2.waitKey()
+                #cv2.drawContours(im,[cnt],0,(255,0,255),3)
+    	        #print cv2.contourArea(cnt), cnt
+                #cv2.imshow("window", im)
+                #cv2.waitKey()
         	"""
         	cv2.drawContours(im,squares,-1,(0,255,0),3)
         	cv2.drawContours(im,rejected,-1,(255,0,0),3)
