@@ -6,7 +6,7 @@ class Postit:
 	sizeX = 0
 	sizeY = 0
 
-	def setTo(self, x, y):
+	def moveTo(self, x, y):
 		self.posX = x
 		self.posY = y
 	
