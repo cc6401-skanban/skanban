@@ -1,5 +1,6 @@
 
 class Postit:
+	id = 0
 	path = ""
 	posX = 0
 	posY = 0

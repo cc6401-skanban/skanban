@@ -1,6 +1,8 @@
 from Postit import Postit
+import sqlite3 as lite
 
 class Board:
+	_id = 0
 	postits = []
 	title = ""
 	background = ""
@@ -16,3 +18,26 @@ class Board:
 	
 	def addPostit(self, p):
 		self.postits.append(p)
+
+	# def persist(self):
+		# con = None
+
+		# try:
+			# con = lite.connect('skanban.db')
+			
+			# cur = con.cursor()    
+			# cur.execute('SELECT * FROM board WHERE board.')
+			
+			# data = cur.fetchone()
+			
+			# print "SQLite version: %s" % data                
+			
+		# except lite.Error, e:
+			
+			# print "Error %s:" % e.args[0]
+			# sys.exit(1)
+			
+		# finally:
+			
+			# if con:
+				# con.close()
