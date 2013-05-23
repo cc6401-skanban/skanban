@@ -1,5 +1,5 @@
 import unittest
-from parser import Parser
+from parserimg import Parser
 
 class TestParser(unittest.TestCase):
     def testParserNone(self):
