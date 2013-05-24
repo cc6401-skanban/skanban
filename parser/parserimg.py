@@ -2,6 +2,9 @@ import numpy as np
 import cv2
 import math
 
+class InvalidPath(Exception):
+    pass
+
 class Parser(object):
     def __init__(self):
         pass
@@ -12,6 +15,8 @@ class Parser(object):
             return postits
             
         img = cv2.imread(path)
+        if img == None:
+            raise InvalidPath
         img = cv2.resize(img, (800,600))
         img = cv2.GaussianBlur(img, (5, 5), 0)
         #aca guardamos los postits encontrados
@@ -67,13 +72,15 @@ class Parser(object):
             xc = (postit[0][0] + postit[1][0] + postit[2][0] + postit[3][0])/4.0
             yc = (postit[0][1] + postit[1][1] + postit[2][1] + postit[3][1])/4.0
 
+            perimetro = cv2.arcLength(postit, True)
+
             for j in xrange(i+1, len(postits)):
                 postitr = postits[j] 
                 xcr = (postitr[0][0] + postitr[1][0] + postitr[2][0] + postitr[3][0])/4.0
                 ycr = (postitr[0][1] + postitr[1][1] + postitr[2][1] + postitr[3][1])/4.0
 
 
-                if math.sqrt((xc-xcr)**2 + (yc-ycr)**2) < cv2.arcLength(postit, True)/8:
+                if math.sqrt((xc-xcr)**2 + (yc-ycr)**2) < perimetro/8:
                     break
 
                 if j == len(postits)-1:
