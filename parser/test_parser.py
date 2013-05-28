@@ -1,5 +1,5 @@
 import unittest
-from parser import Parser
+from parserimg import Parser, InvalidPath
 
 class TestParser(unittest.TestCase):
     def testParserNone(self):
@@ -51,6 +51,20 @@ class TestParser(unittest.TestCase):
         
         # Then
         self.assertEqual(len(objects), 1)
+
+    def testParserInvalidFile(self):
+        # Given
+        p = Parser()
+
+        # When Then
+        self.assertRaises(InvalidPath, p.parse, "../documento.doc")
+
+    def testParserImageNotFound(self):
+        # Given
+        p = Parser()
+ 
+        # When Then
+        self.assertRaises(InvalidPath, p.parse, "../noexiste.jpg")
         
      #testear imagen en blanco
      #testear imagen con 1 solo postit

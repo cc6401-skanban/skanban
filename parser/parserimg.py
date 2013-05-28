@@ -1,5 +1,9 @@
 import numpy as np
 import cv2
+import math
+
+class InvalidPath(Exception):
+    pass
 
 class Parser(object):
     def __init__(self):
@@ -11,12 +15,14 @@ class Parser(object):
             return postits
             
         img = cv2.imread(path)
+        if img == None:
+            raise InvalidPath
         img = cv2.resize(img, (800,600))
         img = cv2.GaussianBlur(img, (5, 5), 0)
         #aca guardamos los postits encontrados
                 
         for gray in cv2.split(img):
-            for thr in xrange(0, 255, 256):
+            for thr in xrange(0, 255, 25):
                 if thr == 0:
                     imgc2 = cv2.Canny(gray, 20,150,5)
                 else:
@@ -57,19 +63,49 @@ class Parser(object):
         cv2.drawContours(blank,postits,0,(255,255,255),3)
         cv2.imshow("img", blank)
         """
-        cv2.drawContours( img, postits, -1, (255,0,0),3)
-        print postits[0]
-        x,y,w,h = rects[0]
+
+        #Quitar post-its repetidos
+        postitsnr = []
+
+        for i in xrange(0, len(postits)):
+            postit = postits[i] 
+            xc = (postit[0][0] + postit[1][0] + postit[2][0] + postit[3][0])/4.0
+            yc = (postit[0][1] + postit[1][1] + postit[2][1] + postit[3][1])/4.0
+
+            perimetro = cv2.arcLength(postit, True)
+
+            for j in xrange(i+1, len(postits)):
+                postitr = postits[j] 
+                xcr = (postitr[0][0] + postitr[1][0] + postitr[2][0] + postitr[3][0])/4.0
+                ycr = (postitr[0][1] + postitr[1][1] + postitr[2][1] + postitr[3][1])/4.0
+
+
+                if math.sqrt((xc-xcr)**2 + (yc-ycr)**2) < perimetro/8:
+                    break
+
+                if j == len(postits)-1:
+                    postitsnr.append(postit)
+
+            if i == len(postits)-1:
+                postitsnr.append(postit)
+
+
+        cv2.drawContours( img, postitsnr, -1, (255,0,0),3)
+        cv2.imshow("img", img)
+        cv2.waitKey()
+        if len(postits) != 0:
+            print postits[0]
+            x,y,w,h = rects[0]
         
-        img2 = cv2.getRectSubPix(img, (w, h), (x+w/2, y+h/2))
-        cv2.imshow("img", img2)
-        cv2.waitKey()      
+            img2 = cv2.getRectSubPix(img, (w, h), (x+w/2, y+h/2))
+            cv2.imshow("img", img2)
+            cv2.waitKey()      
            
-        return postits
+        return postitsnr
                         
                         
                         
-Parser().parse('../image.jpg')
+#Parser().parse('../image.jpg')
                         
                         
                         
