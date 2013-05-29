@@ -1,14 +1,21 @@
 from sqlalchemy import *
 from Postit import Postit
 from Board import Board
+
+from sqlalchemy.ext.declarative import declarative_base
+Base = declarative_base()
+
 class persister:
 
-	engine = create_engine('sqlite:///skanban.db', echo=True)
+    engine = create_engine('postgresql:///root:storm@localhost/skanban', echo=True)
+    Base.metadata.create_all(engine) 
+    
+    """
 	metadata = MetaData()
 	
 	## Crear tablas si aun no existen
 	postit_table = Table('postit', metadata,
-	Column('postit_id', Integer, primary_key=True),
+	Column('id', Integer, primary_key=True),
 	Column('path', String(512)),
 	Column('posX', Integer),
 	Column('posY', Integer),
@@ -20,7 +27,7 @@ class persister:
 	#postits = []
 
 	board_table  = Table('board', metadata,
-	Column('board_id', Integer, primary_key=True),
+	Column('id', Integer, primary_key=True),
 	Column('title', String(200)),
 	Column('background', String(200)),
 	Column('sizeX', Integer),
@@ -43,3 +50,6 @@ class persister:
 
 	def loadPostit(self,id):
 		pass
+    """
+
+persister()
