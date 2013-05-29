@@ -17,7 +17,8 @@ class Parser(object):
     def saveImage(self, path, i, img):
         head, tail = os.path.split(path)
         f = os.path.splitext(tail)[0]
-        d = os.path.join('images/'+f)        
+        d = os.path.join('images/'+f)   
+           
         if not os.path.exists(d):
             os.makedirs(d)
         filename = d+"/postit_"+str(i)+".jpg"
@@ -118,8 +119,8 @@ class Parser(object):
         
             img2 = cv2.getRectSubPix(img, (w, h), (x+w/2, y+h/2))
             
-            path = self.saveImage(path, i, img2)
-            board.append(Postit(path, x, y, w, h))
+            path_ = self.saveImage(path, i, img2)
+            board.append(Postit(path_, x, y, w, h))
             
             #cv2.imshow("imagen", img2)
             #cv2.waitKey()      
@@ -128,7 +129,7 @@ class Parser(object):
                         
                         
 #asi se usa:                        
-#Parser().parse('../image.jpg')
+Parser().parse('../image.jpg')
                         
                         
                         

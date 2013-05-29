@@ -22,9 +22,9 @@ class Postit(Base):
     def moveTo(self, x, y):
         self.posX = x
         self.posY = y
-
+        
         # Mensaje de prueba
-		print "Me movi a " + self.posX + ", " + self.posY
+        print "Me movi a " + str(self.posX) + ", " + str(self.posY)
     
     def getPosition(self):
         l = [self.posX, self.posY]

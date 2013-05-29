@@ -5,26 +5,29 @@ from dragShape import DragShape
 #----------------------------------------------------------------------
 
 class DragCanvas(wx.ScrolledWindow):
-    def __init__(self, parent, ID, backgroundImage, arrPostIts):
+    def __init__(self, parent, ID, backgroundColor, arrPostIts):
         wx.ScrolledWindow.__init__(self, parent, ID)
         self.shapes = []
         self.dragImage = None
         self.dragShape = None
         self.hiliteShape = None
 
+        self.parent = parent
+
         self.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
-        self.bg_bmp = wx.Image(opj(backgroundImage), wx.BITMAP_TYPE_JPEG).ConvertToBitmap()
+        self.bg_bmp = wx.Image(opj("Fondo.jpg"), wx.BITMAP_TYPE_JPEG).ConvertToBitmap()
         self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
+        #self.SetBackgroundColour(wx.BLACK)
 
         # Make a shape from an image and mask.  This one will demo
         # dragging outside the window
         #bmp = images.TestStar.GetBitmap()
 		
         for x in range(len(arrPostIts)):
-            bmp = wx.Image(opj(arrPostIts[x].path), wx.BITMAP_TYPE_PNG).ConvertToBitmap()
+            bmp = wx.Image(opj(arrPostIts[x].path), wx.BITMAP_TYPE_JPEG).ConvertToBitmap()
         
             shape = DragShape(bmp)
-            shape.pos = arrPostIts.getPosition
+            shape.pos = arrPostIts[x].getPosition()
             shape.postit = arrPostIts[x]
             shape.fullscreen = True
             self.shapes.append(shape)
@@ -136,6 +139,7 @@ class DragCanvas(wx.ScrolledWindow):
             self.dragShape = shape
             self.dragStartPos = evt.GetPosition()
 
+
     # Left mouse button up.
     def OnLeftUp(self, evt):
         if not self.dragImage or not self.dragShape:
@@ -174,10 +178,11 @@ class DragCanvas(wx.ScrolledWindow):
             
         self.dragShape.shown = True
         self.RefreshRect(self.dragShape.GetRect())
+        self.dragShape.postit.moveTo(self.dragShape.pos[0], self.dragShape.pos[1])
         self.dragShape = None
 
-        self.dragShape.postit.moveTo(self.dragShape.pos[0], self.dragShape.pos[1])
-
+        
+        
 
     # The mouse is moving
     def OnMotion(self, evt):
@@ -218,6 +223,9 @@ class DragCanvas(wx.ScrolledWindow):
 
         # if we have shape and image then move it, posibly highlighting another shape.
         elif self.dragShape and self.dragImage:
+
+            self.parent.Refresh()
+
             onShape = self.FindShape(evt.GetPosition())
             unhiliteOld = False
             hiliteNew = False
