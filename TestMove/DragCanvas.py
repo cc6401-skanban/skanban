@@ -157,7 +157,7 @@ class DragCanvas(wx.ScrolledWindow):
         dc = wx.PaintDC(self)
         self.PrepareDC(dc)
         self.DrawShapes(dc)
-
+        
     # Left mouse button is down.
     def OnLeftDown(self, evt):
         # Did the mouse go down on one of our shapes?
@@ -213,6 +213,7 @@ class DragCanvas(wx.ScrolledWindow):
 
     # The mouse is moving
     def OnMotion(self, evt):
+
         # Ignore mouse movement if we're not dragging.
         if not self.dragShape or not evt.Dragging() or not evt.LeftIsDown():
             return
@@ -232,6 +233,7 @@ class DragCanvas(wx.ScrolledWindow):
             # will get erased.
             self.dragShape.shown = False
             self.RefreshRect(self.dragShape.GetRect(), True)
+
             self.Update()
 
             if self.dragShape.text:
