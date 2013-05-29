@@ -1,6 +1,6 @@
 ﻿import sys
 import wx
-from ShowKanban import showKanban
+from drawKanban import drawKanban
 
 def main():
 
@@ -9,7 +9,7 @@ def main():
 	# se carga un kanban 
 	
 	# se crea una ventana kanban
-	sk = showKanban(kanban)
+	sk = drawKanban(kanban)
 	
 	# mostrar kanban
 	sk.showKanban()
