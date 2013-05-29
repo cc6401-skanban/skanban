@@ -1,5 +1,5 @@
 
-class Postit:
+class Postit(object):
 	id = 0
 	path = ""
 	posX = 0
