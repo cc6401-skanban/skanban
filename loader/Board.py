@@ -1,7 +1,7 @@
 from Postit import Postit
 import sqlite3 as lite
 
-class Board:
+class Board(object):
 	_id = 0
 	postits = []
 	title = ""
