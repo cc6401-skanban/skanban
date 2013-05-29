@@ -20,7 +20,6 @@ class DragShape:
         return wx.Rect(self.pos[0], self.pos[1],
                       self.bmp.GetWidth(), self.bmp.GetHeight())
 
-		
     def Draw(self, dc, op = wx.COPY):
         if self.bmp.Ok():
             # se pide memoria para almacenar el bmp
