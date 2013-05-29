@@ -25,6 +25,7 @@ class DragCanvas(wx.ScrolledWindow):
         
             shape = DragShape(bmp)
             shape.pos = arrPostIts.getPosition
+            shape.postit = arrPostIts[x]
             shape.fullscreen = True
             self.shapes.append(shape)
 
@@ -174,6 +175,8 @@ class DragCanvas(wx.ScrolledWindow):
         self.dragShape.shown = True
         self.RefreshRect(self.dragShape.GetRect())
         self.dragShape = None
+
+        self.dragShape.postit.moveTo(self.dragShape.pos[0], self.dragShape.pos[1])
 
 
     # The mouse is moving
