@@ -43,3 +43,25 @@ class TestPostit(unittest.TestCase):
 
 		# Then
 		self.assertEqual(3, len(b.postits))
+
+	def testSaveLoad(self):
+		# Given
+		l=[Postit("hola",1,2,3,4), Postit("chao",4,3,2,1)]		
+		b = Board(l, "test", "referencia imagen", 100, 200)
+		b.save()
+
+		# When
+		c = Board.load('test')
+
+		# Then
+		self.assertEqual("test", c.title)
+		self.assertEqual("hola", c.postits[0].path)
+		self.assertEqual(1, c.postits[0].posX)
+		self.assertEqual(2, c.postits[0].posY)
+		self.assertEqual(3, c.postits[0].sizeX)
+		self.assertEqual(4, c.postits[0].sizeY)
+		self.assertEqual("chao", c.postits[1].path)
+		self.assertEqual(4, c.postits[1].posX)
+		self.assertEqual(3, c.postits[1].posY)
+		self.assertEqual(2, c.postits[1].sizeX)
+		self.assertEqual(1, c.postits[1].sizeY)

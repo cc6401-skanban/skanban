@@ -11,7 +11,7 @@ class drawKanban():
         self.frame = wx.Frame(None, -1, kanban.title, pos=(50,50), size=(kanban.sizeX, kanban.sizeY), style=wx.DEFAULT_FRAME_STYLE, name="run a sample")
 
         # recibe la imagen de fondo y una lista de los objetos postIt
-        self.dc = DragCanvas.DragCanvas(self.frame,-1, kanban.background, kanban.postits)
+        self.dc = DragCanvas.DragCanvas(self.frame,-1, kanban.background, kanban)
 
     def showKanban(self):
         self.frame.Show(1)

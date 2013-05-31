@@ -14,6 +14,11 @@ class Parser(object):
         pass
         
     #guarda el postit i para el imagen original "path" dado un Mat img. Retorna la ruta final relativa a la carpeta de donde se corre
+    def getTitulo(self, path):
+        head, tail = os.path.split(path)
+        f = os.path.splitext(tail)[0]
+        return f
+
     def saveImage(self, path, i, img):
         head, tail = os.path.split(path)
         f = os.path.splitext(tail)[0]
@@ -45,6 +50,10 @@ class Parser(object):
         return False
                 
     def parse(self,path):
+        titulo = self.getTitulo(path)
+        if os.path.isfile(titulo+'.pkl'):
+            return Board.load(titulo)
+
         postits = []
         rects = []
         if not path:
@@ -125,7 +134,7 @@ class Parser(object):
             #cv2.imshow("imagen", img2)
             #cv2.waitKey()      
             i+=1
-        return Board(board, "Titulo", "#ffffff", 800, 600)
+        return Board(board, self.getTitulo(path), "#ffffff", 800, 600)
                         
                         
 #asi se usa:                        

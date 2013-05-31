@@ -5,7 +5,9 @@ from dragShape import DragShape
 #----------------------------------------------------------------------
 
 class DragCanvas(wx.ScrolledWindow):
-    def __init__(self, parent, ID, backgroundColor, arrPostIts):
+    def __init__(self, parent, ID, backgroundColor, board):
+        self.board = board
+        arrPostIts = board.postits
         wx.ScrolledWindow.__init__(self, parent, ID)
         self.shapes = []
         self.dragImage = None
@@ -180,6 +182,9 @@ class DragCanvas(wx.ScrolledWindow):
         self.RefreshRect(self.dragShape.GetRect())
         self.dragShape.postit.moveTo(self.dragShape.pos[0], self.dragShape.pos[1])
         self.dragShape = None
+        self.board.save()
+
+
 
         
         

@@ -1,9 +1,13 @@
+"""
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
 
 Base = declarative_base()
+"""
+import pickle
 
-class Postit(Base):
+class Postit(object):
+    """
     __tablename__ = 'postit'
     id = Column(Integer, primary_key=True)
     path = Column(String)
@@ -11,6 +15,15 @@ class Postit(Base):
     posY = Column(Integer)
     sizeX = Column(Integer)
     sizeY = Column(Integer)
+    """
+    id = 0
+    path = ""
+    posX = 0
+    posY = 0
+    sizeX = 0
+    sizeY = 0
+
+
 
     def __init__(self, path="", posX=0, posY=0, sizeX=0, sizeY=0):
         self.path = path
@@ -29,5 +42,9 @@ class Postit(Base):
     def getPosition(self):
         l = [self.posX, self.posY]
         return l
+
+    def save(self):
+        return pickle.dumps(self)
+
 
 
