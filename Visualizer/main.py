@@ -12,7 +12,7 @@ def main():
 	
 	# se carga un kanban
     parser = Parser()
-    kanban = parser.parse("../image.jpg")
+    kanban = parser.parse("../imagen2.jpg")
     for postit in kanban.postits:
 		print postit.path
 	# se crea una ventana kanban

@@ -1,17 +1,17 @@
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
-Base = declarative_base()
+# from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy import Column, Integer, String
+# Base = declarative_base()
 
 from Postit import Postit
 
-class Board(Base):
-    __tablename__ = 'board'
-    id = Column(Integer, primary_key=True)
-    postits = []
-    title = Column(String)
-    background = Column(String)
-    sizeX = Column(Integer)
-    sizeY = Column(Integer)
+class Board(object):
+    # __tablename__ = 'board'
+    # id = Column(Integer, primary_key=True)
+    # postits = []
+    # title = Column(String)
+    # background = Column(String)
+    # sizeX = Column(Integer)
+    # sizeY = Column(Integer)
 
     def __init__(self, postits=[], title = "", background="", sizeX=800, sizeY=600):
         self.postits = postits
