@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>jQuery UI Draggable - Constrain movement</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<script src="jquery-1.10.1.js"></script>
+<script src="jquery-ui.js"></script>
+<link rel="stylesheet" href="jquery-ui.css" />
+<style>
+.draggable { width: 90px; height: 90px; padding: 0.5em; float: left; margin: 0 10px 10px 0; }
+#draggable { margin-bottom:20px; position:absolute; }
+#draggable { cursor: n-resize; }
+#board { width: 95%; height:800px; border:2px solid #ccc; padding: 10px; }
+h3 { clear: left; }
+</style>
+<script>
+	$(function() {
+
+	$( ".postit" ).draggable({ containment: "#board", scroll: false,  
+		stop: function() {
+			var x = $(this).css('left');
+			var y = $(this).css('top');
+			alert(  x +  ', ' + y);
+		} });
+
+	});
+</script>
+</head>
+	<body>
+
+		<div id="board">
+
+			<div id="postit1" class="draggable ui-widget-content postit">
+				<p>1</p>
+			</div>
+			
+			<div id="postit2" class="draggable ui-widget-content postit">
+				<p>2</p>
+			</div>
+			
+			<div id="postit3" class="draggable ui-widget-content postit">
+				<p>3</p>
+			</div>
+			
+		</div>
+
+	</body>
+</html>
