@@ -1,4 +1,4 @@
-
+import wx
 #----------------------------------------------------------------------
 
 # objeto que representa un post-it
@@ -9,7 +9,7 @@ class DragShape:
         self.shown = True					# define si es visible
         self.text = None					# si no es none la imagen es reemplazada por el texto cuando se arrastra
         self.fullscreen = False				# define si la imagen puede arrastrarse fuera de la ventana
-        self.postit = None
+        self.postit = None                  # referencia al post-it a partir del cual se genero este shape
 
     # Recibe un punto e indica si esta dentro del rectangulo que contiene la imagen
     def HitTest(self, pt):
