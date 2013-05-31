@@ -8,15 +8,14 @@ from Postit import Postit
 import pickle
 
 class Board(object):
-    """
-    __tablename__ = 'board'
-    id = Column(Integer, primary_key=True)
-    postits = []
-    title = Column(String)
-    background = Column(String)
-    sizeX = Column(Integer)
-    sizeY = Column(Integer)
-    """
+    # __tablename__ = 'board'
+    # id = Column(Integer, primary_key=True)
+    # postits = []
+    # title = Column(String)
+    # background = Column(String)
+    # sizeX = Column(Integer)
+    # sizeY = Column(Integer)
+
     id = 0
     postits = []
     title = ""
