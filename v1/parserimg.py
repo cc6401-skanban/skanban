@@ -2,7 +2,6 @@ import numpy as np
 import cv2
 import math
 import sys, os
-sys.path.insert(0,"../loader/")
 from Postit import *
 from Board import *
 
@@ -52,9 +51,9 @@ class Parser(object):
     def findPostits(self, img, imgc2, rects, postits):
         """
         """
-        cv2.imshow("window", img)
-        cv2.imshow("window1", imgc2)
-        cv2.waitKey()
+        #cv2.imshow("window", img)
+        #cv2.imshow("window1", imgc2)
+        #cv2.waitKey()
         
         #encontramos las fronteras en la imagen de 0 y 1, cv2.RETR_EXTERNAL devuelve contorno externo, cv2.CHAIN_APPROX_SIMPLE : algoritmo utilizado para detectar contornos
         contours, hierarchy = cv2.findContours(imgc2,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
