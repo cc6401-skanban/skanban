@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import math
 import sys, os
+from scipy.ndimage import label
 from Postit import *
 from Board import *
 
@@ -19,7 +20,7 @@ class Parser(object):
 
     #guarda el postit i para el imagen original "path" dado un Mat img. Retorna la ruta final relativa a la carpeta de donde se corre
     def saveImage(self, path, i, img):
-				# divide el path considerando el /
+		# divide el path considerando el /
         head, tail = os.path.split(path)
         f = os.path.splitext(tail)[0]
         d = os.path.join('images/'+f)   
@@ -48,42 +49,33 @@ class Parser(object):
             if math.sqrt((xc-xcr)**2 + (yc-ycr)**2) < perimetro/8:
                 return True
         return False
+
     def findPostits(self, img, imgc2, rects, postits):
         """
         """
-        #cv2.imshow("window", img)
-        #cv2.imshow("window1", imgc2)
-        #cv2.waitKey()
         
         #encontramos las fronteras en la imagen de 0 y 1, cv2.RETR_EXTERNAL devuelve contorno externo, cv2.CHAIN_APPROX_SIMPLE : algoritmo utilizado para detectar contornos
         contours, hierarchy = cv2.findContours(imgc2,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-        
-        # blank = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
-        ##cv2.drawContours( blank, contours, -1, (255,255,255),-1)
-        # blank = cv2.cvtColor(blank, cv2.COLOR_BGR2GRAY)
-        ##cv2.drawContours(blank,contours,0,(255,255,255),3)
-        # cv2.drawContours( blank, contours, -1, (255,255,255),-1)
-        #cv2.imshow("img", img)
-        #cv2.waitKey()
-                        
+                             
         aux = []
         descartados = []
                         
         for cnt in contours:
-                          # obtenemos el perimetro
+            # obtenemos el perimetro
             cnt_len = cv2.arcLength(cnt, True)
-                                # se aproxima el contorno a un poligono
+            # se aproxima el contorno a un poligono
             cnt = cv2.approxPolyDP(cnt, 0.02*cnt_len, True)
-                                # se calcula el area
+            # se calcula el area
             area = cv2.contourArea(cnt)
-                                # area minima para que se considere un post-it
+            # area minima para que se considere un post-it
             min_postit = 3000
             
-                                # si el area es mayor que el area minima y mas chica que el area minima por 20 y es un poligono de 4 lados y es convexo
+            # si el area es mayor que el area minima y mas chica que el area minima por 20 y es un poligono de 4 lados y es convexo
             if area>min_postit and area < min_postit*20 and len(cnt) <6 and len(cnt) >=4 and cv2.isContourConvex(cnt):
-                                        # se obtiene el rectangulo minimo que lo contiene orientado con respecto a la orientacion de los bordes de la imagen 
+
+                # se obtiene el rectangulo minimo que lo contiene orientado con respecto a la orientacion de los bordes de la imagen 
                 rect = cv2.boundingRect(cnt)
-                                        # ?
+                # ?
                 cnt = cnt.reshape(-1, 2)
                 #si no esta repetido, se agrega, si no se ignora
                 aux.append(cnt)
@@ -92,8 +84,8 @@ class Parser(object):
                     postits.append(cnt)
             elif 0:
                 print area, len(cnt)
-                cv2.drawContours(img, [cnt], 0,(255,0,255),3) 
-                cv2.imshow("window", img)
+                cv2.drawContours(img2, [cnt], 0,(255,0,255),3) 
+                cv2.imshow("window", img2)
                 cv2.waitKey()
                 
         # blank = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
@@ -131,20 +123,26 @@ class Parser(object):
         #aca guardamos los postits encontrados
         
         for gray in cv2.split(img):
-            imgc2 = cv2.Canny(gray, 20,150,5)
+            imgc2 = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 7, 2)
+            postits, rects = self.findPostits(img, imgc2, rects, postits)
+
+            imgc2 = cv2.Canny(gray, 20,150,None,3)
             postits, rects = self.findPostits(img, imgc2, rects, postits)
 
             retval, imgc2 = cv2.threshold(gray,0,255,cv2.THRESH_BINARY | cv2.THRESH_OTSU)
             postits, rects = self.findPostits(img, imgc2, rects, postits)            
 
             retval, imgc2 = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
-            postits, rects = self.findPostits(img, imgc2, rects, postits)            
+            postits, rects = self.findPostits(img, imgc2, rects, postits)
+
+                      
 
             for thr in xrange(0, 255, 25):
                 retval, imgc2 = cv2.threshold(gray,thr,255,cv2.THRESH_BINARY)
-                postits, rects = self.findPostits(img, imgc2, rects, postits)            
+                postits, rects = self.findPostits(img, imgc2, rects, postits)
+
                 retval, imgc2 = cv2.threshold(gray,thr,255,cv2.THRESH_BINARY_INV)
-                postits, rects = self.findPostits(img, imgc2, rects, postits)            
+                postits, rects = self.findPostits(img, imgc2, rects, postits)
                 
                 
         """
@@ -163,8 +161,21 @@ class Parser(object):
         cv2.imshow("img", blank)
         """
 
-        
+        # Pre-processing. Intento de Watershed
+        img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)    
+        _, img_bin = cv2.threshold(img_gray, 0, 255,
+                cv2.THRESH_OTSU)
+        img_bin = cv2.morphologyEx(img_bin, cv2.MORPH_OPEN,
+                np.ones((3, 3), dtype=int))
 
+        result = self.segment_on_dt(img, img_bin)
+
+        result[result != 255] = 0
+        result = cv2.dilate(result, None)
+        imgc2 = img.copy()
+        imgc2[result == 255] = (0, 0, 255)
+                        
+        
         #dibujar contornos de postits no repetidos
         #cv2.drawContours( img, postits, -1, (255,0,0),3)
         #cv2.imshow("img", img)
@@ -187,7 +198,27 @@ class Parser(object):
             #cv2.waitKey()      
             i+=1
         return Board(board, self.getTitulo(path), "#ffffff", 800, 600)
-                        
+
+    # Watershed
+    def segment_on_dt(self, a, img):
+        border = cv2.dilate(img, None, iterations=5)
+        border = border - cv2.erode(border, None)
+
+        dt = cv2.distanceTransform(img, 2, 3)
+        dt = ((dt - dt.min()) / (dt.max() - dt.min()) * 255).astype(np.uint8)
+        _, dt = cv2.threshold(dt, 180, 255, cv2.THRESH_BINARY)
+        lbl, ncc = label(dt)
+        lbl = lbl * (255/ncc)
+        # Completing the markers now. 
+        lbl[border == 255] = 255
+
+        lbl = lbl.astype(np.int32)
+        cv2.watershed(a, lbl)
+
+        lbl[lbl == -1] = 0
+        lbl = lbl.astype(np.uint8)
+        return 255 - lbl
+
                         
 #asi se usa:                        
 #Parser().parse('../imagen2.jpg')
