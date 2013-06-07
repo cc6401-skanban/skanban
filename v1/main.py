@@ -1,8 +1,6 @@
 ﻿import sys
 import wx
 from drawKanban import drawKanban
-sys.path.insert(0,"../parser/")
-sys.path.insert(0,"../loader/")
 from parserimg import Parser
 from Board import Board
 

@@ -190,4 +190,17 @@ class Parser(object):
                         
                         
 #asi se usa:                        
+<<<<<<< HEAD
+#Parser().parse('../image.jpg')
+=======
 #Parser().parse('../imagen2.jpg')
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+>>>>>>> 641a0b2c5ff6add5b22abc93b13be53f00a61cea
