@@ -10,12 +10,12 @@ def main():
 	
 	# se carga un kanban
     parser = Parser()
-    kanban = parser.parse("../imagen2.jpg")
-    for postit in kanban.postits:
-		print postit.path
-	# se crea una ventana kanban
-    sk = drawKanban(kanban)
-	
+    #kanban = parser.parse("../image4.jpg")
+    #for postit in kanban.postits:
+	#	print postit.path
+	## se crea una ventana kanban
+    sk = drawKanban(None)#kanban)
+	#
 	# mostrar kanban
     sk.showKanban()
 if __name__ == "__main__":
