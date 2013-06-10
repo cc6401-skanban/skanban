@@ -5,10 +5,10 @@ from dragShape import DragShape
 #----------------------------------------------------------------------
 
 class DragCanvas(wx.ScrolledWindow):
-    def __init__(self, parent, ID, backgroundColor, board):
+    def __init__(self, parent, board):
+        wx.ScrolledWindow.__init__(self, parent, wx.NewId())
+
         self.board = board
-        arrPostIts = board.postits
-        wx.ScrolledWindow.__init__(self, parent, ID)
         self.shapes = []
         self.dragImage = None
         self.dragShape = None
@@ -17,14 +17,11 @@ class DragCanvas(wx.ScrolledWindow):
         self.parent = parent
 
         self.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
-        self.bg_bmp = wx.Image(opj("Fondo.jpg"), wx.BITMAP_TYPE_JPEG).ConvertToBitmap()
-        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
-        #self.SetBackgroundColour(wx.BLACK)
-
-        # Make a shape from an image and mask.  This one will demo
-        # dragging outside the window
-        #bmp = images.TestStar.GetBitmap()
-		
+        #self.bg_bmp = wx.Image(opj("Fondo.jpg"), wx.BITMAP_TYPE_JPEG).ConvertToBitmap()
+        self.SetBackgroundStyle(wx.BG_STYLE_COLOUR)
+        
+        # se carga cada post-it en un arreglo de shape
+        arrPostIts = board.postits
         for x in range(len(arrPostIts)):
             bmp = wx.Image(opj(arrPostIts[x].path), wx.BITMAP_TYPE_JPEG).ConvertToBitmap()
         
@@ -64,7 +61,7 @@ class DragCanvas(wx.ScrolledWindow):
         # shape.text = "Some dragging text"
         # self.shapes.append(shape)
 
-
+        # se asocian los metodos a cada evento
         self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
@@ -79,23 +76,21 @@ class DragCanvas(wx.ScrolledWindow):
     def OnLeaveWindow(self, evt):
         pass
 
-
     # tile the background bitmap
-    def TileBackground(self, dc):
-        sz = self.GetClientSize()
-        w = self.bg_bmp.GetWidth()
-        h = self.bg_bmp.GetHeight()
-
-        x = 0
-
-        while x < sz.width:
-            y = 0
-
-            while y < sz.height:
-                dc.DrawBitmap(self.bg_bmp, x, y)
-                y = y + h
-
-            x = x + w
+    #def TileBackground(self, dc):
+    #    sz = self.GetClientSize()
+    #    w = self.bg_bmp.GetWidth()
+    #    h = self.bg_bmp.GetHeight()
+    #    x = 0
+    
+    #    while x < sz.width:
+    #        y = 0
+    #
+    #        while y < sz.height:
+    #            dc.DrawBitmap(self.bg_bmp, x, y)
+    #            y = y + h
+    
+    #        x = x + w
 
 
     # Go through our list of shapes and draw them in whatever place they are.
@@ -112,7 +107,6 @@ class DragCanvas(wx.ScrolledWindow):
                 return shape
         return None
 
-
     # Clears the background, then redraws it. If the DC is passed, then
     # we only do so in the area so designated. Otherwise, it's the whole thing.
     def OnEraseBackground(self, evt):
@@ -121,7 +115,7 @@ class DragCanvas(wx.ScrolledWindow):
             dc = wx.ClientDC(self)
             rect = self.GetUpdateRegion().GetBox()
             dc.SetClippingRect(rect)
-        self.TileBackground(dc)
+        #self.TileBackground(dc)
 
     # Fired whenever a paint event occurs
     def OnPaint(self, evt):
