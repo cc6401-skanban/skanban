@@ -20,7 +20,7 @@ class Parser(object):
 
     #guarda el postit i para el imagen original "path" dado un Mat img. Retorna la ruta final relativa a la carpeta de donde se corre
     def saveImage(self, path, i, img):
-				# divide el path considerando el /
+        # divide el path considerando el /
         head, tail = os.path.split(path)
         f = os.path.splitext(tail)[0]
         d = os.path.join('images/'+f)   
@@ -50,8 +50,7 @@ class Parser(object):
                 return True
         return False
     def findPostits(self, img, imgc2, rects, postits):
-        """
-        """
+        
         cv2.imshow("window", img)
         cv2.imshow("window1", imgc2)
         cv2.waitKey()
@@ -71,18 +70,18 @@ class Parser(object):
         descartados = []
                         
         for cnt in contours:
-                          # obtenemos el perimetro
+            # obtenemos el perimetro
             cnt_len = cv2.arcLength(cnt, True)
-                                # se aproxima el contorno a un poligono
+            # se aproxima el contorno a un poligono
             cnt = cv2.approxPolyDP(cnt, 0.02*cnt_len, True)
-                                # se calcula el area
+            # se calcula el area
             area = cv2.contourArea(cnt)
-                                # area minima para que se considere un post-it
+            # area minima para que se considere un post-it
             min_postit = 3000
             
-                                # si el area es mayor que el area minima y mas chica que el area minima por 20 y es un poligono de 4 lados y es convexo
+            # si el area es mayor que el area minima y mas chica que el area minima por 20 y es un poligono de 4 lados y es convexo
             if area>min_postit and area < min_postit*20 and len(cnt) <6 and len(cnt) >=4 and cv2.isContourConvex(cnt):
-                                        # se obtiene el rectangulo minimo que lo contiene orientado con respecto a la orientacion de los bordes de la imagen 
+                # se obtiene el rectangulo minimo que lo contiene orientado con respecto a la orientacion de los bordes de la imagen 
                 rect = cv2.boundingRect(cnt)
                                         # ?
                 cnt = cnt.reshape(-1, 2)
@@ -178,7 +177,7 @@ class Parser(object):
             #Recortar y mostrar el primero            
             x,y,w,h = rects[i]
         
-						# subimagen que contiene el postit detectado
+            # subimagen que contiene el postit detectado
             img2 = cv2.getRectSubPix(img, (w, h), (x+w/2, y+h/2))
             
             path_ = self.saveImage(path, i, img2)
@@ -192,12 +191,3 @@ class Parser(object):
                         
 #asi se usa:                        
 #Parser().parse('../imagen2.jpg')
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        

@@ -17,6 +17,7 @@ Feature: Compute factorial
     Scenario: Factorial of 2
         Given I have then number 2
         When I compute its factorial 
+        
 
 
 
