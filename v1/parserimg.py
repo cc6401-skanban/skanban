@@ -81,7 +81,7 @@ class Parser(object):
             
                                 # si el area es mayor que el area minima y mas chica que el area minima por 20 y es un poligono de 4 lados y es convexo
             if area>min_postit and area < min_postit*20 and len(cnt) <6 and len(cnt) >=4 and cv2.isContourConvex(cnt):
-                                        # se obtiene el rectangulo minimo que lo contiene orientado con respecto a la orientacion de los bordes de la imagen 
+                # se obtiene el rectangulo minimo que lo contiene orientado con respecto a la orientacion de los bordes de la imagen 
                 rect = cv2.boundingRect(cnt)
                                         # ?
                 cnt = cnt.reshape(-1, 2)
@@ -186,7 +186,9 @@ class Parser(object):
             #cv2.imshow("imagen", img2)
             #cv2.waitKey()      
             i+=1
-        return Board(board, self.getTitulo(path), "#ffffff", 800, 600)
+        my_board = Board(board, self.getTitulo(path), "#ffffff", 800, 600)
+        my_board.path = path
+        return my_board
                         
                         
 #asi se usa:                        

@@ -6,13 +6,9 @@ from dragShape import DragShape
 
 class DragCanvas(wx.ScrolledWindow):
     def __init__(self, parent, ID, backgroundColor, board):
-        self.board = board
-        arrPostIts = board.postits
+        
         wx.ScrolledWindow.__init__(self, parent, ID)
-        self.shapes = []
-        self.dragImage = None
-        self.dragShape = None
-        self.hiliteShape = None
+
 
         self.parent = parent
 
@@ -25,14 +21,7 @@ class DragCanvas(wx.ScrolledWindow):
         # dragging outside the window
         #bmp = images.TestStar.GetBitmap()
 		
-        for x in range(len(arrPostIts)):
-            bmp = wx.Image(opj(arrPostIts[x].path), wx.BITMAP_TYPE_JPEG).ConvertToBitmap()
         
-            shape = DragShape(bmp)
-            shape.pos = arrPostIts[x].getPosition()
-            shape.postit = arrPostIts[x]
-            shape.fullscreen = True
-            self.shapes.append(shape)
 
         # bmp = wx.Image(opj('horse.png'), wx.BITMAP_TYPE_PNG).ConvertToBitmap()
         # shape = DragShape(bmp)
@@ -72,6 +61,27 @@ class DragCanvas(wx.ScrolledWindow):
         self.Bind(wx.EVT_MOTION, self.OnMotion)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveWindow)
 
+        self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
+
+        self.reInit(board)
+
+    def reInit(self, board):
+        self.board = board
+        arrPostIts = board.postits
+        self.shapes = []
+        self.dragImage = None
+        self.dragShape = None
+        self.delShape = None
+        self.hiliteShape = None
+
+        for x in range(len(arrPostIts)):
+            bmp = wx.Image(opj(arrPostIts[x].path), wx.BITMAP_TYPE_JPEG).ConvertToBitmap()
+        
+            shape = DragShape(bmp)
+            shape.pos = arrPostIts[x].getPosition()
+            shape.postit = arrPostIts[x]
+            shape.fullscreen = True
+            self.shapes.append(shape)
     
     # We're not doing anything here, but you might have reason to.
     # for example, if you were dragging something, you might elect to
@@ -107,7 +117,7 @@ class DragCanvas(wx.ScrolledWindow):
     # This is actually a sophisticated 'hit test', but in this
     # case we're also determining which shape, if any, was 'hit'.
     def FindShape(self, pt):
-        for shape in self.shapes:
+        for shape in reversed(self.shapes):
             if shape.HitTest(pt):
                 return shape
         return None
@@ -141,6 +151,43 @@ class DragCanvas(wx.ScrolledWindow):
             self.dragShape = shape
             self.dragStartPos = evt.GetPosition()
 
+    # Right mouse button is down.
+    def OnRightDown(self, evt):
+        # Did the mouse go down on one of our shapes?
+        shape = self.FindShape(evt.GetPosition())
+        
+
+        if shape:
+            print "ok"
+            self.delShape = shape
+
+            if not hasattr(self, "popupID1"):
+                self.popupID1 = wx.NewId()
+                self.Bind(wx.EVT_MENU, self.DeleteShape, id=self.popupID1)            
+            
+            menu = wx.Menu()            
+            menu.Append(self.popupID1, "Delete")
+            self.PopupMenu(menu)
+            menu.Destroy()
+            
+    def DeleteShape(self, event):        
+        dlg = wx.MessageDialog(self, 'Are you sure?',
+                               'A Message Box',
+                               #wx.OK | wx.ICON_INFORMATION
+                               wx.YES_NO | wx.NO_DEFAULT | wx.ICON_INFORMATION
+                               )
+        val = dlg.ShowModal()
+
+        if val == wx.ID_YES:
+            self.shapes.remove(self.delShape)
+            self.board.postits.remove(self.delShape.postit)
+            self.parent.Refresh()
+            self.board.save()
+
+
+
+        dlg.Destroy()
+        
 
     # Left mouse button up.
     def OnLeftUp(self, evt):
@@ -172,17 +219,31 @@ class DragCanvas(wx.ScrolledWindow):
         #
         # There must be a better way to do this :-)
         #
-        
-        self.dragShape.pos = (
-            self.dragShape.pos[0] + evt.GetPosition()[0] - self.dragStartPos[0],
-            self.dragShape.pos[1] + evt.GetPosition()[1] - self.dragStartPos[1]
-            )
+        self.shapes.remove(self.dragShape)
+        self.board.postits.remove(self.dragShape.postit)
+        self.shapes.append(self.dragShape)
+        self.board.postits.append(self.dragShape.postit)   
+
+
+        x = self.dragShape.pos[0] + evt.GetPosition()[0] - self.dragStartPos[0]
+        y = self.dragShape.pos[1] + evt.GetPosition()[1] - self.dragStartPos[1]
+
+        x = min(max(x,0), self.Size[0]-self.dragShape.postit.sizeX)
+        y = min(max(y,0), self.Size[1]-self.dragShape.postit.sizeY)
+
+        self.dragShape.pos = (x,y)
+
             
         self.dragShape.shown = True
         self.RefreshRect(self.dragShape.GetRect())
         self.dragShape.postit.moveTo(self.dragShape.pos[0], self.dragShape.pos[1])
         self.dragShape = None
+
+        
+             
         self.board.save()
+
+
 
 
 
@@ -258,7 +319,11 @@ class DragCanvas(wx.ScrolledWindow):
                 self.hiliteShape.Draw(dc, wx.INVERT)
 
             # now move it and show it again if needed
-            self.dragImage.Move(evt.GetPosition())
+            new_position = []
+            new_position += [min(max(evt.GetPosition()[0],0), self.Size[0])]
+            new_position += [min(max(evt.GetPosition()[1],0), self.Size[1])]
+
+            self.dragImage.Move(new_position)
             if unhiliteOld or hiliteNew:
                 self.dragImage.Show()
 

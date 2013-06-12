@@ -22,6 +22,7 @@ class Board(object):
     background = ""
     sizeX = 0
     sizeY = 0
+    path = ""
 
     def __init__(self, postits=[], title = "", background="", sizeX=800, sizeY=600):
         self.postits = postits

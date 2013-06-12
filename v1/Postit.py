@@ -22,6 +22,8 @@ class Postit(object):
     posY = 0
     sizeX = 0
     sizeY = 0
+    
+
 
 
     def __init__(self, path="", posX=0, posY=0, sizeX=0, sizeY=0):
