@@ -5,12 +5,18 @@ import Board
 from parserimg import Parser
 from wx.lib.wordwrap import wordwrap # contenedores que albergan texto
 import wx.lib.agw.cubecolourdialog as CCD # para cambiar color de fondo
+import cv2
+import numpy as np 
+from Postit import *
 
 class windowKanban():
     # recibe un objeto Board que contiene el kanban
     def __init__(self, kanban, pos=(50,50)):
         self.app = wx.PySimpleApp()
         self.pos = pos
+	
+	#self.frame = wx.Frame(None, wx.NewId(), "hola", pos, size=(kanban.sizeX, kanban.sizeY), style=wx.DEFAULT_FRAME_STYLE)
+	#self.frame.Show(1)
 
         # se crea la ventana
         self.frame = wx.Frame(None, 
@@ -75,7 +81,10 @@ class windowKanban():
         self.frame.SetMenuBar(menuBar)
 
         # recibe el marco y un kanban para dibujar
-        self.dc = DragCanvas.DragCanvas(self.frame, kanban)
+        self.frame.dc = DragCanvas.DragCanvas(self.frame, kanban)
+
+        #guardo el kanban para despues cortar la imagen
+        self.kanban = kanban
 
     def showKanban(self):
         self.frame.Show(1)
@@ -114,7 +123,17 @@ class windowKanban():
         sk.showKanban()
         
     def onAddPostIt(self, event):
-        print "addPostIt"
+        dlg = AddPostitPanel(self.kanban, self.frame, -1, "Agregar postit manualmente", size=(350, 200),
+                         #style=wx.CAPTION | wx.SYSTEM_MENU | wx.THICK_FRAME,
+                         style=wx.DEFAULT_DIALOG_STYLE, # & ~wx.CLOSE_BOX,
+                         )
+        dlg.CenterOnScreen()
+
+        # this does not return until the dialog is closed.
+        val = dlg.ShowModal()
+
+        #self.frame = wx.Frame(None, title='Photo Control')
+        #self.frame.Show(True)
         
     def onChangeColor(self, event):
         if not hasattr(self, "colourData"):
@@ -178,3 +197,88 @@ class windowKanban():
     #    dlg = AboutBox()
    #     dlg.ShowModal()
    #     dlg.Destroy()
+
+class AddPostitPanel(wx.Dialog):
+    def __init__(
+            self, kanban, parent, ID, title, size=wx.DefaultSize, pos=wx.DefaultPosition, 
+            style=wx.DEFAULT_DIALOG_STYLE,
+            ):
+        self.parent = parent
+        self.nPoints = []
+        self.kanban = kanban
+        self.img = cv2.imread(kanban.resized_path)
+        
+        size = (self.img.shape[1], self.img.shape[0])
+
+        # Instead of calling wx.Dialog.__init__ we precreate the dialog
+        # so we can set an extra style that must be set before
+        # creation, and then we create the GUI object using the Create
+        # method.
+        pre = wx.PreDialog()
+        pre.SetExtraStyle(wx.DIALOG_EX_CONTEXTHELP)
+        pre.Create(parent, ID, title, pos, size, style)
+
+        # This next step is the most important, it turns this Python
+        # object into the real wrapper of the dialog (instead of pre)
+        # as far as the wxPython extension is concerned.
+        self.PostCreate(pre)
+
+        # This extra style can be set after the UI object has been created.
+        if 'wxMac' in wx.PlatformInfo and useMetal:
+            self.SetExtraStyle(wx.DIALOG_EX_METAL)
+
+
+        # Now continue with the normal construction of the dialog
+        # contents
+        self.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
+
+        
+
+        #sizer = wx.BoxSizer(wx.VERTICAL)
+        #self.SetSizeHints(minW=)
+
+        self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
+        self.Bind(wx.EVT_MOUSE_EVENTS, self.OnMouse)
+
+
+    def OnEraseBackground(self, evt):
+        """
+        Add a picture to the background
+        """
+        # yanked from ColourDB.py
+        dc = evt.GetDC()
+ 
+        if not dc:
+            dc = wx.ClientDC(self)
+            rect = self.GetUpdateRegion().GetBox()
+            dc.SetClippingRect(rect)
+        dc.Clear()
+        bmp = wx.Bitmap(self.kanban.resized_path)
+        dc.DrawBitmap(bmp, 0, 0)
+
+
+    def OnMouse(self, event):
+        if event.LeftDown():
+            dc = wx.ClientDC(self)
+            dc.SetBrush(wx.Brush('#ff0000'))
+            dc.DrawCircle(event.GetX(), event.GetY(), 3)
+            self.nPoints+=[[[event.GetX(), event.GetY()]]]
+            if len(self.nPoints)>=4:
+                self.cutPostit()
+
+    def cutPostit(self):
+        print "cuting"
+        rect = cv2.boundingRect(np.array(self.nPoints))
+        x,y,w,h = rect
+        img = cv2.getRectSubPix(self.img, (w, h), (x+w/2, y+h/2))  
+
+        parser = Parser()
+        path_ = parser.saveImage(self.kanban.path, len(self.kanban.postits)+1, img)
+        self.kanban.postits.append(Postit(path_, x, y, w, h))
+        self.kanban.save()
+        
+        self.parent.dc.reInit(self.kanban)
+        self.Destroy()
+
+        
+            
