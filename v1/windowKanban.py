@@ -195,7 +195,7 @@ class windowKanban():
                             "Ivan Pliouchtchai",
                             "Matias Toro I."]
 
-        licenseText = "Esta es la licencia"
+        licenseText = "Copyright (C) 2013  Equipo Skanban\n\nThis program is free software: you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation, either version 3 of the License, or\n(at your option) any later version.\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\nYou should have received a copy of the GNU General Public License\nalong with this program.  If not, see <http://www.gnu.org/licenses/>."
 
         info.License = wordwrap(licenseText, 500, wx.ClientDC(self.frame))
 
