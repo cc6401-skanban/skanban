@@ -6,7 +6,7 @@ Base = declarative_base()
 from Postit import Postit
 """
 import pickle
-import os
+import os, zipfile
 
 class Board(object):
     # __tablename__ = 'board'
@@ -25,6 +25,7 @@ class Board(object):
     sizeY = 0
     path = ""
     resized_path = ""
+    skb_file = ""
 
     def __init__(self, postits=[], title = "", background="", sizeX=800, sizeY=600):
         self.postits = postits
@@ -40,9 +41,35 @@ class Board(object):
         return os.path.join('images',self.title,'data.pkl')
 
 
-    def save(self):
+    def save(self, skb_file_=""):
+        if skb_file_:
+            self.skb_file = skb_file_
+
         fp = open(self.getPKLPath(), 'w+')
         pickle.dump(self, fp)
+        fp.close()
+
+
+        if self.skb_file:
+            self.saveToSKB()
+            
+    def saveToSKB(self):
+        mizipfile = zipfile.ZipFile(self.skb_file, mode = "w")
+
+        head, tail = os.path.split(self.postits[0].path)
+        head2, tail2 = os.path.split(head)
+
+        #print os.path.join("images", tail2)
+        #print self.kanban.title + ".pkl"
+
+        for postit in self.postits:
+            mizipfile.write(postit.path)
+        
+        print self.getPKLPath()
+        mizipfile.write(self.getPKLPath())
+        mizipfile.write(self.resized_path)
+
+        mizipfile.close()
 
     @staticmethod
     def load(title):

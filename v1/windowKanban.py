@@ -119,22 +119,9 @@ class windowKanban():
         if fd.ShowModal() == wx.ID_CANCEL:
             return
 
+        self.kanban.save(fd.GetPath()+".skb")
+
         
-        mizipfile = zipfile.ZipFile(fd.GetPath()+".skb", mode = "w")
-
-        head, tail = os.path.split(self.kanban.postits[0].path)
-        head2, tail2 = os.path.split(head)
-
-        print os.path.join("images", tail2)
-        print self.kanban.title + ".pkl"
-
-        for postit in self.kanban.postits:
-            mizipfile.write(postit.path)
-        
-        mizipfile.write(self.kanban.getPKLPath())
-        mizipfile.write(self.kanban.resized_path)
-
-        mizipfile.close()
     
     def onLoad(self, event):
         print "load"
@@ -146,20 +133,24 @@ class windowKanban():
 
         #with zipfile.ZipFile(fd.GetPath(), "r") as z:
         #   z.extractall()
-
+        dirname = ""
         z = zipfile.ZipFile(fd.GetPath())
         for f in z.namelist():
-            if f.endswith('/'):
-                os.makedirs(f)
+            (dirname, filename) = os.path.split(f)
+            if not os.path.exists(dirname):
+                os.makedirs(dirname)
+            print f
             outfile = open(f, 'wb')
             outfile.write(z.read(f))
             outfile.close()
         z.close()
 
         # lee pkl y se crea una ventana con los objetos
-        #kanban = pickle.load(open(fd.GetPath(), "rb"))
+        print "DIRIDIRIDIR",os.path.join(dirname, "data.pkl")
+        self.kanban = pickle.load(open(os.path.join(dirname, "data.pkl"), "rb"))
 
-        sk = windowKanban(kanban, (self.pos[0]+50, self.pos[1]+50))
+        self.frame.dc.reInit(self.kanban)
+        #sk = windowKanban(kanban, (self.pos[0]+50, self.pos[1]+50))
         sk.showKanban()
 
     def onAddPostIt(self, event):
@@ -191,6 +182,8 @@ class windowKanban():
             
             self.frame.dc.SetBackgroundColour(self.colourData.GetColour())
             self.frame.dc.Refresh()
+            self.frame.kanban.background = self.colourData.GetColour().GetAsString(wx.C2S_HTML_SYNTAX)
+            self.frame.kanban.save()
 
         # Once the dialog is destroyed, Mr. wx.ColourData is no longer your
         # friend. Don't use it again!

@@ -175,7 +175,6 @@ class Parser(object):
                 postits, rects = self.findPostits(img, imgc2, rects, postits)
                 
         #Limpiamos borde
-        print postits
         mask = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
         cv2.drawContours( mask, postits, -1, (255,255,255),-1)
         #mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
