@@ -6,6 +6,7 @@ Base = declarative_base()
 from Postit import Postit
 """
 import pickle
+import os
 
 class Board(object):
     # __tablename__ = 'board'
@@ -35,13 +36,17 @@ class Board(object):
     def addPostit(self, p):
         self.postits.append(p)
 
+    def getPKLPath(self):
+        return os.path.join('images',self.title,'data.pkl')
+
+
     def save(self):
-        fp = open(self.title+'.pkl', 'w+')
+        fp = open(self.getPKLPath(), 'w+')
         pickle.dump(self, fp)
 
     @staticmethod
     def load(title):
-        fp = open(title+'.pkl', 'r')
+        fp = open(self.getPKLPath(), 'r')
         return pickle.load(fp)
 
     # def persist(self):

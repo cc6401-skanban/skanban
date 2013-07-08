@@ -1,8 +1,9 @@
-import sys
+import sys, os
 import wx
 import DragCanvas
 import Board
 import pickle
+import zipfile
 from parserimg import Parser
 from wx.lib.wordwrap import wordwrap # contenedores que albergan texto
 import wx.lib.agw.cubecolourdialog as CCD # para cambiar color de fondo
@@ -117,23 +118,50 @@ class windowKanban():
 
         if fd.ShowModal() == wx.ID_CANCEL:
             return
-        
-        miPickle = pickle.dump(self.kanban.postits[0], open(fd.GetPath(),"wb"))
 
+        
+        mizipfile = zipfile.ZipFile(fd.GetPath()+".skb", mode = "w")
+
+        head, tail = os.path.split(self.kanban.postits[0].path)
+        head2, tail2 = os.path.split(head)
+
+        print os.path.join("images", tail2)
+        print self.kanban.title + ".pkl"
+
+        for postit in self.kanban.postits:
+            mizipfile.write(postit.path)
+        
+        mizipfile.write(self.kanban.getPKLPath())
+        mizipfile.write(self.kanban.resized_path)
+
+        mizipfile.close()
+    
     def onLoad(self, event):
         print "load"
         fd = wx.FileDialog(self.frame, "Selecione un archivo *.pkl")
-        fd.SetWildcard("Archivo (*.pkl)|*.pkl")
+        fd.SetWildcard("Archivo (*.skb)|*.skb")
 
         if fd.ShowModal() == wx.ID_CANCEL:
             return
 
+        #with zipfile.ZipFile(fd.GetPath(), "r") as z:
+        #   z.extractall()
+
+        z = zipfile.ZipFile(fd.GetPath())
+        for f in z.namelist():
+            if f.endswith('/'):
+                os.makedirs(f)
+            outfile = open(f, 'wb')
+            outfile.write(z.read(f))
+            outfile.close()
+        z.close()
+
         # lee pkl y se crea una ventana con los objetos
-        kanban = pickle.load(open(fd.GetPath(), "rb"))
+        #kanban = pickle.load(open(fd.GetPath(), "rb"))
 
         sk = windowKanban(kanban, (self.pos[0]+50, self.pos[1]+50))
         sk.showKanban()
-        
+
     def onAddPostIt(self, event):
         dlg = AddPostitPanel(self.kanban, self.frame, -1, "Agregar postit manualmente", size=(350, 200),
                          #style=wx.CAPTION | wx.SYSTEM_MENU | wx.THICK_FRAME,

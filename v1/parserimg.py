@@ -126,10 +126,10 @@ class Parser(object):
             return postits
             
         img = cv2.imread(path)
+
         if img == None:
             raise InvalidPath
         img = cv2.resize(img, (800,600))
-
 
         resized_path = self.saveImageResized(path, img)
 
