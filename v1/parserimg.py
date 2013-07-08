@@ -115,10 +115,12 @@ class Parser(object):
 
         return img2
 
-    def removeBackground(self,img,x,y,w,h,mask):
+    def removeBackground(self,img,x,y,w,h,postit):   
+        mask = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
+        cv2.drawContours( mask, [postit], -1, (255,255,255),-1)
 
         img2 = cv2.getRectSubPix(img, (w, h), (x+w/2, y+h/2))
-        postitMask = cv2.getRectSubPix(mask, (w, h), (x+w/2, y+h/2))  
+        postitMask = cv2.getRectSubPix(mask, (w, h), (x+w/2, y+h/2)) 
         img2channels = cv2.split(img2)
         postitMaskChannels = cv2.split(postitMask)
         
@@ -229,7 +231,7 @@ class Parser(object):
         
 						# subimagen que contiene el postit detectado
 
-            img2 = self.removeBackground(imgOriginal,x,y,w,h,mask)
+            img2 = self.removeBackground(imgOriginal,x,y,w,h,postit)
             
             #img2alpha = cv2.cvtColor(img2, RGB2RGBA)
             

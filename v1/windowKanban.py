@@ -59,14 +59,14 @@ class windowKanban():
         # elementos de la lista del menu Editar
         m_addPostIt = menu.Append(wx.NewId(), "&Agregar post-it", "Agregar post-it manualmente al kanban")
         m_changeColor = menu.Append(wx.NewId(), "&Cambiar color fondo", "Cambia el color de fondo de la ventana")
-        m_addVerticalLine = menu.Append(wx.NewId(), "Agregar linea &Horizontal", "Agrega una linea vertical en la posicion donde se hace clic")
-        m_addHorizontalLine = menu.Append(wx.NewId(), "Agregar linea &Vertical", "Agrega una linea horizontal en la posicion donde se hace clic")
+        #m_addVerticalLine = menu.Append(wx.NewId(), "Agregar linea &Horizontal", "Agrega una linea vertical en la posicion donde se hace clic")
+        #m_addHorizontalLine = menu.Append(wx.NewId(), "Agregar linea &Vertical", "Agrega una linea horizontal en la posicion donde se hace clic")
 
         # se asocia un metodo al evento clic del elemento del menu
         self.frame.Bind(wx.EVT_MENU, self.onAddPostIt, m_addPostIt)
         self.frame.Bind(wx.EVT_MENU, self.onChangeColor, m_changeColor)
-        self.frame.Bind(wx.EVT_MENU, self.onAddVerticalLine, m_addVerticalLine)
-        self.frame.Bind(wx.EVT_MENU, self.onAddHorizontalLine, m_addHorizontalLine)
+        #self.frame.Bind(wx.EVT_MENU, self.onAddVerticalLine, m_addVerticalLine)
+        #self.frame.Bind(wx.EVT_MENU, self.onAddHorizontalLine, m_addHorizontalLine)
         
         # se agrega el menu 'Editar' al menuBar
         menuBar.Append(menu, "&Editar")
@@ -313,12 +313,8 @@ class AddPostitPanel(wx.Dialog):
 
         postits = [np.array(self.nPoints)]
 
-
-        mask = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
-        cv2.drawContours( mask, postits, -1, (255,255,255),-1)
-
         parser = Parser()
-        img = parser.removeBackground(img,x,y,w,h,mask)
+        img = parser.removeBackground(img,x,y,w,h,postits[0])
         path_ = parser.saveImage(self.kanban.path, len(self.kanban.postits)+1, img)
         self.kanban.postits.append(Postit(path_, x, y, w, h))
         self.kanban.save()
