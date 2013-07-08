@@ -292,12 +292,8 @@ class AddPostitPanel(wx.Dialog):
 
         postits = [np.array(self.nPoints)]
 
-
-        mask = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
-        cv2.drawContours( mask, postits, -1, (255,255,255),-1)
-
         parser = Parser()
-        img = parser.removeBackground(img,x,y,w,h,mask)
+        img = parser.removeBackground(img,x,y,w,h,postits[0])
         path_ = parser.saveImage(self.kanban.path, len(self.kanban.postits)+1, img)
         self.kanban.postits.append(Postit(path_, x, y, w, h))
         self.kanban.save()
