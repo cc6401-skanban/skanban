@@ -1,10 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import numpy as np
 import cv2
 import math
 import sys, os
 #from scipy.ndimage import label
 from Postit import *
-from Board import *
+from Kanban import *
 
 class InvalidPath(Exception):
     pass
@@ -134,7 +137,7 @@ class Parser(object):
     def parse(self,path):
         titulo = self.getTitulo(path)
         if os.path.isfile(titulo+'.pkl'):
-            return Board.load(titulo)
+            return Kanban.load(titulo)
 
         postits = []
         rects = []
@@ -224,7 +227,7 @@ class Parser(object):
         
         #si encontre mas de un postit
         i=0        
-        board = []
+        kanban = []
         for postit in postits:
             #Recortar y mostrar el primero            
             x,y,w,h = rects[i]
@@ -241,15 +244,15 @@ class Parser(object):
 
             
             path_ = self.saveImage(path, i, img2)
-            board.append(Postit(path_, x, y, w, h))
+            kanban.append(Postit(path_, x, y, w, h))
             
             #cv2.imshow("imagen", img2)
             #cv2.waitKey()      
             i+=1
-        my_board = Board(board, self.getTitulo(path), "#ffffff", 800, 600)
-        my_board.resized_path = resized_path
-        my_board.path = path
-        return my_board
+        my_kanban = Kanban(kanban, self.getTitulo(path), "#ffffff", 800, 600)
+        my_kanban.resized_path = resized_path
+        my_kanban.path = path
+        return my_kanban
     """                    
     # Watershed
     def segment_on_dt(self, a, img):
@@ -274,12 +277,3 @@ class Parser(object):
                         
 #asi se usa:                        
 #Parser().parse('../imagen2.jpg')
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        

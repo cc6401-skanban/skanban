@@ -1,11 +1,14 @@
-import sys
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import sys, os
 import wx
 import DragCanvas
-import Board
+import Kanban
 import cv2
 import numpy as np
 from Postit import *
-import os 
+
 class drawKanban():
     # recibe un objeto Board que contiene el kanban
     def __init__(self, kanban):

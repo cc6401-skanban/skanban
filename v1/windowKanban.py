@@ -1,7 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import sys, os
 import wx
 import DragCanvas
-import Board
+import Kanban
 import pickle
 import zipfile
 from parserimg import Parser
@@ -12,13 +15,13 @@ import numpy as np
 from Postit import *
 
 class windowKanban():
-    # recibe un objeto Board que contiene el kanban
+    # recibe un objeto Kanban que contiene el kanban
     def __init__(self, kanban, pos=(50,50)):
         self.app = wx.PySimpleApp()
         self.pos = pos
-	
-	#self.frame = wx.Frame(None, wx.NewId(), "hola", pos, size=(kanban.sizeX, kanban.sizeY), style=wx.DEFAULT_FRAME_STYLE)
-	#self.frame.Show(1)
+    
+    #self.frame = wx.Frame(None, wx.NewId(), "hola", pos, size=(kanban.sizeX, kanban.sizeY), style=wx.DEFAULT_FRAME_STYLE)
+    #self.frame.Show(1)
 
         # se crea la ventana
         self.frame = wx.Frame(None, 
@@ -120,8 +123,6 @@ class windowKanban():
             return
 
         self.kanban.save(fd.GetPath()+".skb")
-
-        
     
     def onLoad(self, event):
         print "load"
@@ -321,6 +322,3 @@ class AddPostitPanel(wx.Dialog):
         
         self.parent.dc.reInit(self.kanban)
         self.Destroy()
-
-        
-            

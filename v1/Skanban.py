@@ -1,8 +1,11 @@
-﻿import sys
+﻿#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import sys
 import wx
 from windowKanban import windowKanban
 from parserimg import Parser
-from Board import Board
+from Kanban import Kanban
 
 def main():
 
