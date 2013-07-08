@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import math
 import sys, os
-from scipy.ndimage import label
+#from scipy.ndimage import label
 from Postit import *
 from Board import *
 
@@ -49,7 +49,6 @@ class Parser(object):
             #calculamos el centro de gravedad
             xc = (postit[0][0] + postit[1][0] + postit[2][0] + postit[3][0])/4.0
             yc = (postit[0][1] + postit[1][1] + postit[2][1] + postit[3][1])/4.0
-
             perimetro = cv2.arcLength(postit, True)
 
             
@@ -131,9 +130,11 @@ class Parser(object):
             raise InvalidPath
         img = cv2.resize(img, (800,600))
 
+
         resized_path = self.saveImageResized(path, img)
 
         img_original = img.copy()
+
         img = cv2.GaussianBlur(img, (5, 5), 0)
         #aca guardamos los postits encontrados
         
@@ -174,7 +175,7 @@ class Parser(object):
        
         cv2.drawContours(blank,postits,0,(255,255,255),3)
         cv2.imshow("img", blank)
-        """
+        
 
         # Pre-processing. Intento de Watershed
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)    
@@ -189,7 +190,7 @@ class Parser(object):
         result = cv2.dilate(result, None)
         imgc2 = img.copy()
         imgc2[result == 255] = (0, 0, 255)
-                        
+        """                
         
         #dibujar contornos de postits no repetidos
         #cv2.drawContours( img, postits, -1, (255,0,0),3)
@@ -204,7 +205,9 @@ class Parser(object):
             x,y,w,h = rects[i]
         
 						# subimagen que contiene el postit detectado
+
             img2 = cv2.getRectSubPix(img_original, (w, h), (x+w/2, y+h/2))
+
             
             path_ = self.saveImage(path, i, img2)
             board.append(Postit(path_, x, y, w, h))
@@ -216,7 +219,7 @@ class Parser(object):
         my_board.resized_path = resized_path
         my_board.path = path
         return my_board
-                        
+    """                    
     # Watershed
     def segment_on_dt(self, a, img):
         border = cv2.dilate(img, None, iterations=5)
@@ -236,7 +239,7 @@ class Parser(object):
         lbl[lbl == -1] = 0
         lbl = lbl.astype(np.uint8)
         return 255 - lbl
-
+    """
                         
 #asi se usa:                        
 #Parser().parse('../imagen2.jpg')

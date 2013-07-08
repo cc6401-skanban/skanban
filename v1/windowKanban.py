@@ -2,6 +2,7 @@ import sys
 import wx
 import DragCanvas
 import Board
+import pickle
 from parserimg import Parser
 from wx.lib.wordwrap import wordwrap # contenedores que albergan texto
 import wx.lib.agw.cubecolourdialog as CCD # para cambiar color de fondo
@@ -57,10 +58,14 @@ class windowKanban():
         # elementos de la lista del menu Editar
         m_addPostIt = menu.Append(wx.NewId(), "&Agregar post-it", "Agregar post-it manualmente al kanban")
         m_changeColor = menu.Append(wx.NewId(), "&Cambiar color fondo", "Cambia el color de fondo de la ventana")
-        
+        m_addVerticalLine = menu.Append(wx.NewId(), "Agregar linea &Horizontal", "Agrega una linea vertical en la posicion donde se hace clic")
+        m_addHorizontalLine = menu.Append(wx.NewId(), "Agregar linea &Vertical", "Agrega una linea horizontal en la posicion donde se hace clic")
+
         # se asocia un metodo al evento clic del elemento del menu
         self.frame.Bind(wx.EVT_MENU, self.onAddPostIt, m_addPostIt)
         self.frame.Bind(wx.EVT_MENU, self.onChangeColor, m_changeColor)
+        self.frame.Bind(wx.EVT_MENU, self.onAddVerticalLine, m_addVerticalLine)
+        self.frame.Bind(wx.EVT_MENU, self.onAddHorizontalLine, m_addHorizontalLine)
         
         # se agrega el menu 'Editar' al menuBar
         menuBar.Append(menu, "&Editar")
@@ -118,6 +123,7 @@ class windowKanban():
             return
 
         # lee pkl y se crea una ventana con los objetos
+        kanban = pickle.load(open(fd.GetPath(), "rb"))
 
         sk = windowKanban(kanban, (self.pos[0]+50, self.pos[1]+50))
         sk.showKanban()
@@ -155,6 +161,12 @@ class windowKanban():
         # Once the dialog is destroyed, Mr. wx.ColourData is no longer your
         # friend. Don't use it again!
         dlg.Destroy()
+
+    def onAddVerticalLine(self, event):
+        pass
+
+    def onAddHorizontalLine(self, event):
+        pass
 
     def onAbout(self, event):
         # se crea y completa un objeto info
