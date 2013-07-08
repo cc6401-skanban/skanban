@@ -133,7 +133,7 @@ class Parser(object):
 
         resized_path = self.saveImageResized(path, img)
 
-        img_original = img.copy()
+        imgOriginal = img.copy()
 
         img = cv2.GaussianBlur(img, (5, 5), 0)
         #aca guardamos los postits encontrados
@@ -215,7 +215,7 @@ class Parser(object):
             x,y,w,h = rects[i]
         
 						# subimagen que contiene el postit detectado
-<<<<<<< HEAD
+
             img2 = cv2.getRectSubPix(imgOriginal, (w, h), (x+w/2, y+h/2))
             postitMask = cv2.getRectSubPix(mask, (w, h), (x+w/2, y+h/2))
             
@@ -224,18 +224,14 @@ class Parser(object):
             
             img2channels.append(postitMaskChannels.pop())
             
-            img2 = img2channels
+            img2 = cv2.merge(img2channels)
             
             #img2alpha = cv2.cvtColor(img2, RGB2RGBA)
             
             #img2 = cv2.bitwise_and(img2, postitMask)
             
  
-=======
 
-            img2 = cv2.getRectSubPix(img_original, (w, h), (x+w/2, y+h/2))
-
->>>>>>> d7154d455f1b47081598fb3f010c5d027723fd73
             
             path_ = self.saveImage(path, i, img2)
             board.append(Postit(path_, x, y, w, h))
