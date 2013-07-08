@@ -2,6 +2,7 @@ import sys
 import wx
 import DragCanvas
 import Board
+import pickle
 from parserimg import Parser
 from wx.lib.wordwrap import wordwrap # contenedores que albergan texto
 import wx.lib.agw.cubecolourdialog as CCD # para cambiar color de fondo
@@ -113,6 +114,7 @@ class windowKanban():
             return
 
         # lee pkl y se crea una ventana con los objetos
+        kanban = pickle.load(open(fd.GetPath(), "rb"))
 
         sk = windowKanban(kanban, (self.pos[0]+50, self.pos[1]+50))
         sk.showKanban()
