@@ -23,7 +23,7 @@ class DragCanvas(wx.ScrolledWindow):
         # se carga cada post-it en un arreglo de shape
         arrPostIts = board.postits
         for x in range(len(arrPostIts)):
-            bmp = wx.Image(opj(arrPostIts[x].path), wx.BITMAP_TYPE_JPEG).ConvertToBitmap()
+            bmp = wx.Image(opj(arrPostIts[x].path), wx.BITMAP_TYPE_PNG).ConvertToBitmap()
         
 
         # bmp = wx.Image(opj('horse.png'), wx.BITMAP_TYPE_PNG).ConvertToBitmap()
@@ -78,7 +78,7 @@ class DragCanvas(wx.ScrolledWindow):
         self.hiliteShape = None
 
         for x in range(len(arrPostIts)):
-            bmp = wx.Image(opj(arrPostIts[x].path), wx.BITMAP_TYPE_JPEG).ConvertToBitmap()
+            bmp = wx.Image(opj(arrPostIts[x].path), wx.BITMAP_TYPE_PNG).ConvertToBitmap()
         
             shape = DragShape(bmp)
             shape.pos = arrPostIts[x].getPosition()

@@ -27,7 +27,7 @@ class Parser(object):
            
         if not os.path.exists(d):
             os.makedirs(d)
-        filename = d+"/postit_"+str(i)+".jpg"
+        filename = d+"/postit_"+str(i)+".png"
         cv2.imwrite(filename, img)
         return filename
         
@@ -102,7 +102,7 @@ class Parser(object):
         img2 += 1
 
         return img2
-
+    
     def parse(self,path):
         titulo = self.getTitulo(path)
         if os.path.isfile(titulo+'.pkl'):
@@ -143,7 +143,17 @@ class Parser(object):
                 retval, imgc2 = cv2.threshold(gray,thr,255,cv2.THRESH_BINARY_INV)
                 postits, rects = self.findPostits(img, imgc2, rects, postits)
                 
-                
+        #Limpiamos borde
+        
+        mask = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
+        cv2.drawContours( mask, postits, -1, (255,255,255),-1)
+        #mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
+        
+        
+        
+        #cv2.imshow("img", blank)
+        #cv2.waitKey() 
+        
         """
         blank = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
         cv2.drawContours( blank, postits, -1, (255,255,255),-1)
@@ -189,6 +199,20 @@ class Parser(object):
         
 						# subimagen que contiene el postit detectado
             img2 = cv2.getRectSubPix(imgOriginal, (w, h), (x+w/2, y+h/2))
+            postitMask = cv2.getRectSubPix(mask, (w, h), (x+w/2, y+h/2))
+            
+            img2channels = cv2.split(img2)
+            postitMaskChannels = cv2.split(postitMask)
+            
+            img2channels.append(postitMaskChannels.pop())
+            
+            img2 = img2channels
+            
+            #img2alpha = cv2.cvtColor(img2, RGB2RGBA)
+            
+            #img2 = cv2.bitwise_and(img2, postitMask)
+            
+ 
             
             path_ = self.saveImage(path, i, img2)
             board.append(Postit(path_, x, y, w, h))
