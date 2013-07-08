@@ -43,12 +43,14 @@ class windowKanban():
         menu = wx.Menu()
         
         # elementos de la lista del menu Archivo
-        m_new = menu.Append(wx.NewId(), "&Nuevo", "Crea un nuevo tablero a partir de una imagen.")
-        m_save = menu.Append(wx.NewId(), "&Guardar", "Guarda las posiciones de un tablero.")
-        m_load = menu.Append(wx.NewId(), "&Cargar", "Carga un tablero a partir de un archivo *.pkl.")
+        m_new = menu.Append(wx.NewId(), "&Importar imagen", "Crea un nuevo tablero a partir de una imagen.")
+        m_newWindow = menu.Append(wx.NewId(), "&Nueva ventana", "Crea una ventana Skabnan.")
+        m_save = menu.Append(wx.NewId(), "&Guardar", "Guarda los cambios en fichero skb.")
+        m_load = menu.Append(wx.NewId(), "&Cargar", "Carga un tablero a partir de un archivo *.skb")
 
         # se asocia un metodo al evento clic del elemento del menu
         self.frame.Bind(wx.EVT_MENU, self.onNew, m_new)
+        self.frame.Bind(wx.EVT_MENU, self.onNewWindow, m_newWindow)
         self.frame.Bind(wx.EVT_MENU, self.onSave, m_save)
         self.frame.Bind(wx.EVT_MENU, self.onLoad, m_load)
 
@@ -112,9 +114,16 @@ class windowKanban():
         parser = Parser()
         kanban = parser.parse(fd.GetPath())
 
+        self.kanban = kanban
+        self.frame.dc.reInit(kanban)
+
+    def onNewWindow(self, event):
+
+        parser = Parser()
+        kanban = parser.parse("Skanban.jpg")
         sk = windowKanban(kanban, (self.pos[0]+50, self.pos[1]+50))
         sk.showKanban()
-   
+
     def onSave(self, event):
         print "save"
         fd = wx.FileDialog(self.frame, "Selecione un directorio", style=wx.FD_SAVE)
@@ -126,33 +135,31 @@ class windowKanban():
     
     def onLoad(self, event):
         print "load"
-        fd = wx.FileDialog(self.frame, "Selecione un archivo *.pkl")
+        fd = wx.FileDialog(self.frame, "Selecione un archivo *.skb")
         fd.SetWildcard("Archivo (*.skb)|*.skb")
 
         if fd.ShowModal() == wx.ID_CANCEL:
             return
 
-        #with zipfile.ZipFile(fd.GetPath(), "r") as z:
-        #   z.extractall()
         dirname = ""
         z = zipfile.ZipFile(fd.GetPath())
         for f in z.namelist():
             (dirname, filename) = os.path.split(f)
             if not os.path.exists(dirname):
                 os.makedirs(dirname)
-            print f
+            
             outfile = open(f, 'wb')
             outfile.write(z.read(f))
             outfile.close()
         z.close()
 
         # lee pkl y se crea una ventana con los objetos
-        print "DIRIDIRIDIR",os.path.join(dirname, "data.pkl")
+        print "DIRIDIRIDIR"+os.path.join(dirname, "data.pkl")
         self.kanban = pickle.load(open(os.path.join(dirname, "data.pkl"), "rb"))
 
         self.frame.dc.reInit(self.kanban)
         #sk = windowKanban(kanban, (self.pos[0]+50, self.pos[1]+50))
-        sk.showKanban()
+        #sk.showKanban()
 
     def onAddPostIt(self, event):
         dlg = AddPostitPanel(self.kanban, self.frame, -1, "Agregar postit manualmente", size=(350, 200),
@@ -201,7 +208,7 @@ class windowKanban():
         info = wx.AboutDialogInfo()
         info.Name = "Skanban"
         info.Version = "1.0.0"
-        info.Copyright = "(C) 2013 blah blah blah"
+        info.Copyright = "(C) 2013 "
         info.Description = wordwrap(
             "Este programa ha sido disenado para el curso " 
             "CC6401-1 Taller de Metodologias Agiles de Desarrollo de Software "

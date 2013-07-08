@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import wx
 import os
 from dragShape import DragShape
@@ -68,7 +71,7 @@ class DragCanvas(wx.ScrolledWindow):
 
         self.reInit(board)
 
-    def reInit(self, board):
+    def reInit(self, board): 
         self.board = board
         arrPostIts = board.postits
         self.shapes = []

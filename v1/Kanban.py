@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
@@ -40,7 +43,6 @@ class Kanban(object):
     def getPKLPath(self):
         return os.path.join('images',self.title,'data.pkl')
 
-
     def save(self, skb_file_=""):
         if skb_file_:
             self.skb_file = skb_file_
@@ -49,13 +51,12 @@ class Kanban(object):
         pickle.dump(self, fp)
         fp.close()
 
-
         if self.skb_file:
             self.saveToSKB()
-            
+        
     def saveToSKB(self):
         mizipfile = zipfile.ZipFile(self.skb_file, mode = "w")
-
+        
         head, tail = os.path.split(self.postits[0].path)
         head2, tail2 = os.path.split(head)
 

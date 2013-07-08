@@ -65,8 +65,6 @@ class Parser(object):
         return False
 
     def findPostits(self, img, imgc2, rects, postits):
-        """
-        """
         
         #encontramos las fronteras en la imagen de 0 y 1, cv2.RETR_EXTERNAL devuelve contorno externo, cv2.CHAIN_APPROX_SIMPLE : algoritmo utilizado para detectar contornos
         contours, hierarchy = cv2.findContours(imgc2,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
@@ -109,7 +107,6 @@ class Parser(object):
         # cv2.waitKey()
 
         return [postits, rects]
-
 
     def invertImage(self, img):
         img2 = img[:]
