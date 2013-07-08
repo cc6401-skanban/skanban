@@ -117,6 +117,7 @@ class Parser(object):
         if img == None:
             raise InvalidPath
         img = cv2.resize(img, (800,600))
+        imgOriginal = img.copy()
         img = cv2.GaussianBlur(img, (5, 5), 0)
         #aca guardamos los postits encontrados
         
@@ -187,7 +188,7 @@ class Parser(object):
             x,y,w,h = rects[i]
         
 						# subimagen que contiene el postit detectado
-            img2 = cv2.getRectSubPix(img, (w, h), (x+w/2, y+h/2))
+            img2 = cv2.getRectSubPix(imgOriginal, (w, h), (x+w/2, y+h/2))
             
             path_ = self.saveImage(path, i, img2)
             board.append(Postit(path_, x, y, w, h))
