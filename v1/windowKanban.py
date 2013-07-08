@@ -110,9 +110,15 @@ class windowKanban():
 
         sk = windowKanban(kanban, (self.pos[0]+50, self.pos[1]+50))
         sk.showKanban()
-
+   
     def onSave(self, event):
         print "save"
+        fd = wx.FileDialog(self.frame, "Selecione un directorio", style=wx.FD_SAVE)
+
+        if fd.ShowModal() == wx.ID_CANCEL:
+            return
+        
+        miPickle = pickle.dump(self.kanban.postits[0], open(fd.GetPath(),"wb"))
 
     def onLoad(self, event):
         print "load"
@@ -145,9 +151,9 @@ class windowKanban():
         if not hasattr(self, "colourData"):
             self.colourData = wx.ColourData()
         
-        self.colourData.SetColour(self.dc.GetBackgroundColour())
+        self.colourData.SetColour(self.frame.dc.GetBackgroundColour())
         
-        dlg = CCD.CubeColourDialog(self.dc, self.colourData)
+        dlg = CCD.CubeColourDialog(self.frame.dc, self.colourData)
 
         if dlg.ShowModal() == wx.ID_OK:
 
@@ -155,8 +161,8 @@ class windowKanban():
             # contain valid information. Fetch the data ...
             self.colourData = dlg.GetColourData()
             
-            self.dc.SetBackgroundColour(self.colourData.GetColour())
-            self.dc.Refresh()
+            self.frame.dc.SetBackgroundColour(self.colourData.GetColour())
+            self.frame.dc.Refresh()
 
         # Once the dialog is destroyed, Mr. wx.ColourData is no longer your
         # friend. Don't use it again!
