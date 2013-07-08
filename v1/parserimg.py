@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import math
 import sys, os
-from scipy.ndimage import label
+#from scipy.ndimage import label
 from Postit import *
 from Board import *
 
@@ -37,7 +37,6 @@ class Parser(object):
             #calculamos el centro de gravedad
             xc = (postit[0][0] + postit[1][0] + postit[2][0] + postit[3][0])/4.0
             yc = (postit[0][1] + postit[1][1] + postit[2][1] + postit[3][1])/4.0
-
             perimetro = cv2.arcLength(postit, True)
 
             
@@ -158,7 +157,7 @@ class Parser(object):
        
         cv2.drawContours(blank,postits,0,(255,255,255),3)
         cv2.imshow("img", blank)
-        """
+        
 
         # Pre-processing. Intento de Watershed
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)    
@@ -173,7 +172,7 @@ class Parser(object):
         result = cv2.dilate(result, None)
         imgc2 = img.copy()
         imgc2[result == 255] = (0, 0, 255)
-                        
+        """                
         
         #dibujar contornos de postits no repetidos
         #cv2.drawContours( img, postits, -1, (255,0,0),3)
@@ -199,7 +198,7 @@ class Parser(object):
         my_board = Board(board, self.getTitulo(path), "#ffffff", 800, 600)
         my_board.path = path
         return my_board
-                        
+    """                    
     # Watershed
     def segment_on_dt(self, a, img):
         border = cv2.dilate(img, None, iterations=5)
@@ -219,7 +218,7 @@ class Parser(object):
         lbl[lbl == -1] = 0
         lbl = lbl.astype(np.uint8)
         return 255 - lbl
-
+    """
                         
 #asi se usa:                        
 #Parser().parse('../imagen2.jpg')
