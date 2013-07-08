@@ -23,6 +23,7 @@ class Board(object):
     sizeX = 0
     sizeY = 0
     path = ""
+    resized_path = ""
 
     def __init__(self, postits=[], title = "", background="", sizeX=800, sizeY=600):
         self.postits = postits

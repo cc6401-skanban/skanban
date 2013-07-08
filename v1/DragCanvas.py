@@ -85,6 +85,8 @@ class DragCanvas(wx.ScrolledWindow):
             shape.postit = arrPostIts[x]
             shape.fullscreen = True
             self.shapes.append(shape)
+
+        self.Refresh()
     
     # We're not doing anything here, but you might have reason to.
     # for example, if you were dragging something, you might elect to

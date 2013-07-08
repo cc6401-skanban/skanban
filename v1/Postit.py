@@ -38,7 +38,7 @@ class Postit(object):
         self.posY = y
         
         # Mensaje de prueba
-        print "Me movi a " + str(self.posX) + ", " + str(self.posY)
+        #print "Me movi a " + str(self.posX) + ", " + str(self.posY)
     
     def getPosition(self):
         l = [self.posX, self.posY]

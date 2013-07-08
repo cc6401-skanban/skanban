@@ -18,6 +18,18 @@ class Parser(object):
         f = os.path.splitext(tail)[0]
         return f
 
+    def saveImageResized(self, path, img):
+        # divide el path considerando el /
+        head, tail = os.path.split(path)
+        f = os.path.splitext(tail)[0]
+        d = os.path.join('images/'+f)   
+           
+        if not os.path.exists(d):
+            os.makedirs(d)
+        filename = d+"/resized.jpg"
+        cv2.imwrite(filename, img)
+        return filename
+
     #guarda el postit i para el imagen original "path" dado un Mat img. Retorna la ruta final relativa a la carpeta de donde se corre
     def saveImage(self, path, i, img):
 		# divide el path considerando el /
@@ -117,7 +129,12 @@ class Parser(object):
         if img == None:
             raise InvalidPath
         img = cv2.resize(img, (800,600))
-        imgOriginal = img.copy()
+
+
+        resized_path = self.saveImageResized(path, img)
+
+        img_original = img.copy()
+
         img = cv2.GaussianBlur(img, (5, 5), 0)
         #aca guardamos los postits encontrados
         
@@ -198,6 +215,7 @@ class Parser(object):
             x,y,w,h = rects[i]
         
 						# subimagen que contiene el postit detectado
+<<<<<<< HEAD
             img2 = cv2.getRectSubPix(imgOriginal, (w, h), (x+w/2, y+h/2))
             postitMask = cv2.getRectSubPix(mask, (w, h), (x+w/2, y+h/2))
             
@@ -213,6 +231,11 @@ class Parser(object):
             #img2 = cv2.bitwise_and(img2, postitMask)
             
  
+=======
+
+            img2 = cv2.getRectSubPix(img_original, (w, h), (x+w/2, y+h/2))
+
+>>>>>>> d7154d455f1b47081598fb3f010c5d027723fd73
             
             path_ = self.saveImage(path, i, img2)
             board.append(Postit(path_, x, y, w, h))
@@ -221,6 +244,7 @@ class Parser(object):
             #cv2.waitKey()      
             i+=1
         my_board = Board(board, self.getTitulo(path), "#ffffff", 800, 600)
+        my_board.resized_path = resized_path
         my_board.path = path
         return my_board
     """                    

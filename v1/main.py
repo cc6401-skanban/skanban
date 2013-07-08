@@ -9,7 +9,7 @@ def main():
 	# se carga un kanban
     parser = Parser()
 
-    kanban = parser.parse("../image.jpg")
+    kanban = parser.parse(sys.argv[1])
     #for postit in kanban.postits:
     #	print postit.path
 	

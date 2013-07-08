@@ -15,7 +15,7 @@ class drawKanban():
         # recibe la imagen de fondo y una lista de los objetos postIt
         self.dc = DragCanvas.DragCanvas(self.frame,-1, kanban.background, kanban)
         self.kanban = kanban
-        #self.customPostit()
+        self.customPostit()
 
     def showKanban(self):
         self.frame.Show(1)
