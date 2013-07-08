@@ -223,7 +223,7 @@ class windowKanban():
                             "Ivan Pliouchtchai",
                             "Matias Toro I."]
 
-        licenseText = "Esta es la licencia"
+        licenseText = "Copyright (C) 2013  Equipo Skanban\n\nThis program is free software: you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation, either version 3 of the License, or\n(at your option) any later version.\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\nYou should have received a copy of the GNU General Public License\nalong with this program.  If not, see <http://www.gnu.org/licenses/>."
 
         info.License = wordwrap(licenseText, 500, wx.ClientDC(self.frame))
 
@@ -316,9 +316,16 @@ class AddPostitPanel(wx.Dialog):
         print "cuting"
         rect = cv2.boundingRect(np.array(self.nPoints))
         x,y,w,h = rect
-        img = cv2.getRectSubPix(self.img, (w, h), (x+w/2, y+h/2))  
+        img = self.img
+
+        postits = [np.array(self.nPoints)]
+
+
+        mask = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
+        cv2.drawContours( mask, postits, -1, (255,255,255),-1)
 
         parser = Parser()
+        img = parser.removeBackground(img,x,y,w,h,mask)
         path_ = parser.saveImage(self.kanban.path, len(self.kanban.postits)+1, img)
         self.kanban.postits.append(Postit(path_, x, y, w, h))
         self.kanban.save()
