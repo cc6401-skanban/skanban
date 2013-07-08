@@ -33,10 +33,10 @@ p15
 I105
 sS'posX'
 p16
-I358
+I285
 sS'posY'
 p17
-I256
+I302
 sbasg14
 I800
 sg15
