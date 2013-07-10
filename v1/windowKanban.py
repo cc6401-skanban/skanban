@@ -12,7 +12,7 @@ from wx.lib.wordwrap import wordwrap # contenedores que albergan texto
 import wx.lib.agw.cubecolourdialog as CCD # para cambiar color de fondo
 import cv2
 import numpy as np 
-from Postit import *
+from Postit import * 
 
 class windowKanban():
     # recibe un objeto Kanban que contiene el kanban
@@ -105,6 +105,8 @@ class windowKanban():
     # Eventos del menu                                                                  #
     #####################################################################################
     def onNew(self, event):
+        print "new"
+
         fd = wx.FileDialog(self.frame, "Selecione una imagen")
         fd.SetWildcard("Imagenes (*.bmp, *.jpg, *.jpeg, *.png)|*.jpg;*.bmp;*.jpeg;*.png")
         
@@ -118,6 +120,7 @@ class windowKanban():
         self.frame.dc.reInit(kanban)
 
     def onNewWindow(self, event):
+        print "newWindow"
 
         parser = Parser()
         kanban = parser.parse("Skanban.jpg")
@@ -154,7 +157,6 @@ class windowKanban():
         z.close()
 
         # lee pkl y se crea una ventana con los objetos
-        print "DIRIDIRIDIR"+os.path.join(dirname, "data.pkl")
         self.kanban = pickle.load(open(os.path.join(dirname, "data.pkl"), "rb"))
 
         self.frame.dc.reInit(self.kanban)
