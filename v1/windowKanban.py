@@ -125,7 +125,7 @@ class windowKanban():
         sk.showKanban()
 
     def onSave(self, event):
-        print "save"
+        #print "save"
         fd = wx.FileDialog(self.frame, "Selecione un directorio", style=wx.FD_SAVE)
 
         if fd.ShowModal() == wx.ID_CANCEL:
@@ -134,7 +134,7 @@ class windowKanban():
         self.kanban.save(fd.GetPath()+".skb")
     
     def onLoad(self, event):
-        print "load"
+        #print "load"
         fd = wx.FileDialog(self.frame, "Selecione un archivo *.skb")
         fd.SetWildcard("Archivo (*.skb)|*.skb")
 
@@ -154,10 +154,16 @@ class windowKanban():
         z.close()
 
         # lee pkl y se crea una ventana con los objetos
-        print "DIRIDIRIDIR"+os.path.join(dirname, "data.pkl")
+        #print "DIRIDIRIDIR"+os.path.join(dirname, "data.pkl")
         self.kanban = pickle.load(open(os.path.join(dirname, "data.pkl"), "rb"))
 
+	self.frame.kanban = self.kanban
+
         self.frame.dc.reInit(self.kanban)
+	#print "background", self.kanban.background
+	self.frame.dc.SetBackgroundColour(self.kanban.background)
+        self.frame.dc.Refresh()
+
         #sk = windowKanban(kanban, (self.pos[0]+50, self.pos[1]+50))
         #sk.showKanban()
 
@@ -314,7 +320,7 @@ class AddPostitPanel(wx.Dialog):
                 self.cutPostit()
 
     def cutPostit(self):
-        print "cuting"
+        #print "cuting"
         rect = cv2.boundingRect(np.array(self.nPoints))
         x,y,w,h = rect
         img = self.img

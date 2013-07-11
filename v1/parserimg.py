@@ -133,8 +133,8 @@ class Parser(object):
 
     def parse(self,path):
         titulo = self.getTitulo(path)
-        if os.path.isfile(titulo+'.pkl'):
-            return Kanban.load(titulo)
+        #if os.path.isfile(titulo+'.pkl'):
+        #    return Kanban.load(titulo)
 
         postits = []
         rects = []
