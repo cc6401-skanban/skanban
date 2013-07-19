@@ -45,7 +45,7 @@ class windowKanban():
         # elementos de la lista del menu Archivo
         m_new = menu.Append(wx.NewId(), "&Importar imagen", "Crea un nuevo tablero a partir de una imagen.")
         m_newWindow = menu.Append(wx.NewId(), "&Nueva ventana", "Crea una ventana Skabnan.")
-        m_save = menu.Append(wx.NewId(), "&Guardar", "Guarda los cambios en fichero skb.")
+        m_save = menu.Append(wx.NewId(), "&Guardar como...", "Guarda los cambios en fichero skb.")
         m_load = menu.Append(wx.NewId(), "&Cargar", "Carga un tablero a partir de un archivo *.skb")
 
         # se asocia un metodo al evento clic del elemento del menu
@@ -97,6 +97,7 @@ class windowKanban():
         #guardo el kanban para despues cortar la imagen
         self.kanban = kanban
 
+
     def showKanban(self):
         self.frame.Show(1)
         self.app.MainLoop()
@@ -118,6 +119,7 @@ class windowKanban():
 
         self.kanban = kanban
         self.frame.dc.reInit(kanban)
+        self.frame.SetSizeWH(self.kanban.sizeX,self.kanban.sizeY)
 
     def onNewWindow(self, event):
         print "newWindow"
@@ -133,8 +135,11 @@ class windowKanban():
 
         if fd.ShowModal() == wx.ID_CANCEL:
             return
+	path = fd.GetPath()
 
-        self.kanban.save(fd.GetPath()+".skb")
+	if path[-4:]!='.skb':
+		path = path+'.skb'
+        self.kanban.save(path)
     
     def onLoad(self, event):
         #print "load"
@@ -166,6 +171,7 @@ class windowKanban():
 	self.frame.dc.SetBackgroundColour(self.kanban.background)
         self.frame.dc.Refresh()
 
+        self.frame.SetSizeWH(self.kanban.sizeX,self.kanban.sizeY)
         #sk = windowKanban(kanban, (self.pos[0]+50, self.pos[1]+50))
         #sk.showKanban()
 
