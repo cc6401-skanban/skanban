@@ -198,15 +198,12 @@ class windowKanban():
         #bg_colour = wx.Colour(57, 115, 57)  # matches the bg image
         font = wx.Font(15, wx.ROMAN, wx.NORMAL, wx.BOLD)
         textExtent = self.frame.dc.GetFullTextExtent(text, font)
-        print textExtent[0]
-        print textExtent[1]
-        print font
-        print textExtent				
+        
         # create a bitmap the same size as our text
         #np_array = np.array(textExtent[0], textExtent[1])
 
-        np_array = np.zeros((textExtent[0], textExtent[1], 1), np.uint8)
-        print np_array.size
+        np_array = np.zeros((textExtent[1], textExtent[0] + 2, 1), np.uint8)
+        
         #np_array = cv2.cvtColor(np_array, cv2.COLOR_BGR2GRAY)
         
         # 'draw' the text onto the bitmap
@@ -225,14 +222,14 @@ class windowKanban():
         shape.text = "Some dragging text"
         self.shapes.append(shape)
         """
-        """
-       	#img = cv2.putText(np_array, text , (12,12), cv2.FONT_HERSHEY_PLAIN, 1,  255)
-       	cv2.putText(np_array, "Watermarking with OpenCV", (5,5), cv2.FONT_HERSHEY_PLAIN, fontScale=1.0, color=(255,255,255), thickness=1)
         # ancho y alto
+        h = textExtent[1]
+        w = textExtent[0]
         
-        h = textExtent[0]
-        w = textExtent[1]
-        # posicion por defecto
+       	#img = cv2.putText(np_array, text , (12,12), cv2.FONT_HERSHEY_PLAIN, 1,  255)
+       	cv2.putText(np_array, text, (5, h-5), cv2.FONT_HERSHEY_PLAIN, fontScale=1.0, color=(255,255,255), thickness=1)
+        
+        # posicion por defecto donde aparece el texto
         x = 20
         y = 20
         
@@ -241,8 +238,8 @@ class windowKanban():
         path_ = parser.saveImage(self.kanban.path, len(self.kanban.postits)+1, np_array)
         self.kanban.postits.append(Postit(path_, x, y, w, h))
         self.kanban.save()        
-        """     
-        ###########
+        
+        self.frame.dc.reInit(self.kanban)
         
     def onChangeColor(self, event):
         if not hasattr(self, "colourData"):
