@@ -15,6 +15,7 @@ class InvalidPath(Exception):
 class Parser(object):
     def __init__(self):
         pass
+	self.i = 0
         
     def getTitulo(self, path):
         head, tail = os.path.split(path)
@@ -53,25 +54,33 @@ class Parser(object):
             xc = (postit[0][0] + postit[1][0] + postit[2][0] + postit[3][0])/4.0
             yc = (postit[0][1] + postit[1][1] + postit[2][1] + postit[3][1])/4.0
             perimetro = cv2.arcLength(postit, True)
-
             
             #calculamos el centro de gravedad
             xcr = (postitr[0][0] + postitr[1][0] + postitr[2][0] + postitr[3][0])/4.0
             ycr = (postitr[0][1] + postitr[1][1] + postitr[2][1] + postitr[3][1])/4.0
 
+	    #print xc, yc, perimetro, xcr, ycr
             #si las distancias de los centros de gravedad son muy chicas no agregar postit a lista final
             if math.sqrt((xc-xcr)**2 + (yc-ycr)**2) < perimetro/8:
                 return True
         return False
 
+    
     def findPostits(self, img, imgc2, rects, postits):
-        
+	self.i+=1
+	"""
+	print self.i
+	if self.i==20:
+	        cv2.imshow("img", imgc2)
+        	cv2.waitKey()
+	"""
         #encontramos las fronteras en la imagen de 0 y 1, cv2.RETR_EXTERNAL devuelve contorno externo, cv2.CHAIN_APPROX_SIMPLE : algoritmo utilizado para detectar contornos
         contours, hierarchy = cv2.findContours(imgc2,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
                              
         aux = []
         descartados = []
-                        
+
+	                        
         for cnt in contours:
             # obtenemos el perimetro
             cnt_len = cv2.arcLength(cnt, True)
@@ -93,18 +102,28 @@ class Parser(object):
                 if not self.isPostitEncontrado(postits, cnt):
                     rects.append(rect)                            
                     postits.append(cnt)
-            elif 0:
-                print area, len(cnt)
-                cv2.drawContours(img2, [cnt], 0,(255,0,255),3) 
-                cv2.imshow("window", img2)
-                cv2.waitKey()
-                
+		"""
+		else:
+		    print postits, cnt
+		    print "postit encontrado"
+	        if self.i==20:
+                    print area, len(cnt)
+                    cv2.drawContours(imgc2, [cnt], 0,(255,0,255),3) 
+                    cv2.imshow("window", imgc2)
+                    cv2.waitKey()
+		"""
         # blank = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
         # blank = cv2.cvtColor(blank, cv2.COLOR_BGR2GRAY)
         # #cv2.drawContours(blank,aux,0,(255,255,255),3)
         # cv2.drawContours( blank, aux, -1, (255,255,255),-1)
         # cv2.imshow("img", blank)
         # cv2.waitKey()
+	"""
+	if self.i==20:
+            cv2.drawContours(imgc2, postits, 0,(255,0,255),3) 
+            cv2.imshow("window", imgc2)
+            cv2.waitKey()
+	"""
 
         return [postits, rects]
 
@@ -130,6 +149,20 @@ class Parser(object):
 
         return img2
 
+    @staticmethod
+    def changeAspect(img, w, h):
+        w0 = img.shape[1]
+        h0 = img.shape[0]
+        if w0<w and h0<h:
+            return (max(w0,100),max(h0,100))
+        if h0>w0:
+            h1 = h
+            w1 = int(h*1.0/h0*w0)
+        else:
+            w1 = w
+            h1 = int(w*1.0/w0*h0)
+        return (w1,h1)
+
 
     def parse(self,path):
         titulo = self.getTitulo(path)
@@ -145,7 +178,8 @@ class Parser(object):
 
         if img == None:
             raise InvalidPath
-        img = cv2.resize(img, (800,600))
+        (w1,h1) = self.changeAspect(img,800,600)
+        img = cv2.resize(img, (w1,h1))
 
         resized_path = self.saveImageResized(path, img)
 
@@ -249,6 +283,8 @@ class Parser(object):
         my_kanban = Kanban(kanban, self.getTitulo(path), "#ffffff", 800, 600)
         my_kanban.resized_path = resized_path
         my_kanban.path = path
+        my_kanban.sizeX = w1
+	my_kanban.sizeY = h1
         return my_kanban
     """                    
     # Watershed
