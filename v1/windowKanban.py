@@ -194,7 +194,23 @@ class windowKanban():
         
     def onAddText(self, event):
         
-        text = "Some Text"
+        dlg = wx.TextEntryDialog(
+        self.frame, 'Ingrese el texto a insertar','Ingreso de texto', 'Python')
+
+        dlg.SetValue("Skanban!")
+        if dlg.ShowModal() == wx.ID_OK and len(dlg.GetValue()) > 50:
+            dlg = wx.MessageDialog(self.frame, 'Texto demasiado largo',
+                               'Error', wx.OK | wx.ICON_ERROR)
+            dlg.ShowModal()
+            dlg.Destroy()  
+            return   
+        elif len(dlg.GetValue())!=0:
+            text = dlg.GetValue()
+      
+        else:
+            return
+        dlg.Destroy()
+        
         #bg_colour = wx.Colour(57, 115, 57)  # matches the bg image
         font = wx.Font(15, wx.ROMAN, wx.NORMAL, wx.BOLD)
         textExtent = self.frame.dc.GetFullTextExtent(text, font)
