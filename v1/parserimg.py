@@ -95,7 +95,7 @@ class Parser(object):
             
             # si el area es mayor que el area minima y mas chica que el area minima por 20 y es un poligono de 4 lados y es convexo
             #print area
-            if area>min_postit and area < min_postit*20 and len(cnt) <6 and len(cnt) >=4 and cv2.isContourConvex(cnt):
+            if area>min_postit and area < min_postit*50 and len(cnt) <6 and len(cnt) >=4 and cv2.isContourConvex(cnt):
                 # se obtiene el rectangulo minimo que lo contiene orientado con respecto a la orientacion de los bordes de la imagen 
                 rect = cv2.boundingRect(cnt)
                 # ?

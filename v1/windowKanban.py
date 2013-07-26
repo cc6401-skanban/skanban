@@ -124,6 +124,7 @@ class windowKanban():
         self.kanban = kanban
         self.frame.dc.reInit(kanban)
         self.frame.SetSizeWH(self.kanban.sizeX,self.kanban.sizeY)
+        self.frame.kanban = kanban
 
     def onNewWindow(self, event):
         print "newWindow"
@@ -403,6 +404,19 @@ class AddPostitPanel(wx.Dialog):
 
     def cutPostit(self):
         #print "cuting"
+
+        #ver si no se cruzan las lineas
+        
+        if self.intersect(self.nPoints[0][0],self.nPoints[1][0],self.nPoints[2][0],self.nPoints[3][0]):
+            
+            aux = self.nPoints[1][0]
+            self.nPoints[1][0] = self.nPoints[2][0]
+            self.nPoints[2][0] = aux 
+        elif self.intersect(self.nPoints[1][0],self.nPoints[2][0],self.nPoints[3][0],self.nPoints[0][0]):
+            aux = self.nPoints[2][0]
+            self.nPoints[2][0] = self.nPoints[3][0]
+            self.nPoints[3][0] = aux 
+            
         rect = cv2.boundingRect(np.array(self.nPoints))
         x,y,w,h = rect
         img = self.img
@@ -417,3 +431,39 @@ class AddPostitPanel(wx.Dialog):
         
         self.parent.dc.reInit(self.kanban)
         self.Destroy()
+
+    def intersect(self, p1, p2, p3, p4):
+
+        if p1[0]-p2[0] != 0:
+            m12 = 1.0*(p1[1]-p2[1])/(p1[0]-p2[0])
+        else:
+            m12 = 'inf'
+
+        if p3[0]-p4[0] != 0:
+            m34 = 1.0*(p3[1]-p4[1])/(p3[0]-p4[0])
+        else:
+            m34 = 'inf'
+
+        if m12 == m34:
+            return False
+
+        if m12 == 'inf':
+            y = m34*(p1[0]-p3[0]) + p3[1]
+            if p1[0]>=min(p3[0], p4[0]) and p1[0]<= max(p3[0], p4[0]) and y>=min(p1[0], p2[0]) and y<=max(p1[0],p2[0]):
+                return True
+            return False
+        
+        if m34 == 'inf':
+            y = m12*(p3[0]-p1[0]) + p1[1]
+            if p3[0]>=min(p1[0], p2[0]) and p3[0]<= max(p1[0], p2[0]) and y>=min(p3[0], p4[0]) and y<=max(p3[0],p4[0]):
+                return True
+            return False
+
+        
+        x = (m12*p1[0]-m34*p3[0]+p3[1]-p1[1])/(m12-m34)
+        y = m12*(x-p1[0]) + p1[1]
+        
+        if x>= min(p1[0],p2[0]) and x<=max(p2[0],p1[0]) and y>= min(p3[1],p4[1]) and y<=max(p3[1],p4[1]):
+            return True
+
+        return False
