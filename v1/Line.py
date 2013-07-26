@@ -1,6 +1,30 @@
 import wx
+import math
 
 #----------------------------------------------------------------------
+
+def dist(p1, p2, p3):
+    px = p2.x - p1.x
+    py = p2.y - p1.y
+
+    something = px*px + py*py
+
+    u = ((p3.x - p1.x) * px + (p3.y - p1.y) * py) / float(something)
+
+    if u > 1:
+        u = 1
+    elif u < 0:
+        u = 0
+
+    x = p1.x + u * px
+    y = p1.y + u * py
+
+    dx = x - p3.x
+    dy = y - p3.y
+
+    distance = math.sqrt(dx*dx + dy*dy)
+
+    return distance
 
 # objeto que representa un post-it
 class Line:
@@ -11,8 +35,21 @@ class Line:
 
     # Recibe un punto e indica si esta dentro del rectangulo que contiene la imagen
     def HitTest(self, pt):
-        rect = self.GetRect()
-        return rect.InsideXY(pt.x, pt.y)
+
+        pix_tol = 10
+
+        """m = 1.0 * (self.p1.y - self.p2.y)/(self.p1.x - self.p2.x)
+        a = -m
+        b = 1
+        dist = abs(a*pt.x + b*pt.y + (m*self.p2.x - self.p2.y))/((a**2+b**2)**0.5)"""
+
+        distance = dist(self.p1, self.p2, pt)
+
+        # m = 1
+
+        # print "p1= ", self.p1, " p2= ", self.p2, " pt= ", pt, " m= ", m, " dist= " , distance
+
+        return distance <= pix_tol
 
     # Retorna un rectangulo que contiene la imagen
     def GetRect(self):
