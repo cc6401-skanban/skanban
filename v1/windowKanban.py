@@ -45,7 +45,7 @@ class windowKanban():
         # elementos de la lista del menu Archivo
         m_new = menu.Append(wx.NewId(), "&Importar imagen", "Crea un nuevo tablero a partir de una imagen.")
         m_newWindow = menu.Append(wx.NewId(), "&Nueva ventana", "Crea una ventana Skabnan.")
-        m_save = menu.Append(wx.NewId(), "&Guardar", "Guarda los cambios en fichero skb.")
+        m_save = menu.Append(wx.NewId(), "&Guardar como...", "Guarda los cambios en fichero skb.")
         m_load = menu.Append(wx.NewId(), "&Cargar", "Carga un tablero a partir de un archivo *.skb")
 
         # se asocia un metodo al evento clic del elemento del menu
@@ -63,6 +63,7 @@ class windowKanban():
 
         # elementos de la lista del menu Editar
         m_addPostIt = menu.Append(wx.NewId(), "&Agregar post-it", "Agregar post-it manualmente al kanban")
+        m_addText = menu.Append(wx.NewId(), "&Agregar Texto", "Agregar texto manualmente al kanban")
         m_changeColor = menu.Append(wx.NewId(), "&Cambiar color fondo", "Cambia el color de fondo de la ventana")
         m_drawLine = menu.Append(wx.NewId(), "&Dibujar Linea", "Dibuja una linea en base a dos coordenadas")
         #m_addVerticalLine = menu.Append(wx.NewId(), "Agregar linea &Horizontal", "Agrega una linea vertical en la posicion donde se hace clic")
@@ -70,6 +71,7 @@ class windowKanban():
 
         # se asocia un metodo al evento clic del elemento del menu
         self.frame.Bind(wx.EVT_MENU, self.onAddPostIt, m_addPostIt)
+        self.frame.Bind(wx.EVT_MENU, self.onAddText, m_addText)
         self.frame.Bind(wx.EVT_MENU, self.onChangeColor, m_changeColor)
         self.frame.Bind(wx.EVT_MENU, self.onDrawLine, m_drawLine)
         #self.frame.Bind(wx.EVT_MENU, self.onAddVerticalLine, m_addVerticalLine)
@@ -99,6 +101,7 @@ class windowKanban():
         #guardo el kanban para despues cortar la imagen
         self.kanban = kanban
 
+
     def showKanban(self):
         self.frame.Show(1)
         self.app.MainLoop()
@@ -120,6 +123,7 @@ class windowKanban():
 
         self.kanban = kanban
         self.frame.dc.reInit(kanban)
+        self.frame.SetSizeWH(self.kanban.sizeX,self.kanban.sizeY)
 
     def onNewWindow(self, event):
         print "newWindow"
@@ -135,8 +139,11 @@ class windowKanban():
 
         if fd.ShowModal() == wx.ID_CANCEL:
             return
+	path = fd.GetPath()
 
-        self.kanban.save(fd.GetPath()+".skb")
+	if path[-4:]!='.skb':
+		path = path+'.skb'
+        self.kanban.save(path)
     
     def onLoad(self, event):
         #print "load"
@@ -168,6 +175,7 @@ class windowKanban():
         self.frame.dc.SetBackgroundColour(self.kanban.background)
         self.frame.dc.Refresh()
 
+        self.frame.SetSizeWH(self.kanban.sizeX,self.kanban.sizeY)
         #sk = windowKanban(kanban, (self.pos[0]+50, self.pos[1]+50))
         #sk.showKanban()
 
@@ -183,6 +191,73 @@ class windowKanban():
 
         #self.frame = wx.Frame(None, title='Photo Control')
         #self.frame.Show(True)
+        
+        ############
+        
+    def onAddText(self, event):
+        
+        dlg = wx.TextEntryDialog(
+        self.frame, 'Ingrese el texto a insertar','Ingreso de texto', 'Python')
+
+        dlg.SetValue("Skanban!")
+        if dlg.ShowModal() == wx.ID_OK and len(dlg.GetValue()) > 50:
+            dlg = wx.MessageDialog(self.frame, 'Texto demasiado largo',
+                               'Error', wx.OK | wx.ICON_ERROR)
+            dlg.ShowModal()
+            dlg.Destroy()  
+            return   
+        elif len(dlg.GetValue())!=0:
+            text = dlg.GetValue()
+      
+        else:
+            return
+        dlg.Destroy()
+        
+        #bg_colour = wx.Colour(57, 115, 57)  # matches the bg image
+        font = wx.Font(15, wx.ROMAN, wx.NORMAL, wx.BOLD)
+        textExtent = self.frame.dc.GetFullTextExtent(text, font)
+        
+        # create a bitmap the same size as our text
+        #np_array = np.array(textExtent[0], textExtent[1])
+
+        np_array = np.zeros((textExtent[1], textExtent[0] + 2, 1), np.uint8)
+        
+        #np_array = cv2.cvtColor(np_array, cv2.COLOR_BGR2GRAY)
+        
+        # 'draw' the text onto the bitmap
+        #self.frame.dc.SelectObject(bmp)
+        #self.frame.dc.SetBackground(wx.Brush(bg_colour, wx.SOLID))
+        #self.frame.dc.Clear()
+        """
+        self.frame.dc.SetTextForeground(wx.RED)
+        self.frame.dc.SetFont(font)
+        self.frame.dc.DrawText(text, 0, 0)
+        self.frame.dc.SelectObject(wx.NullBitmap)
+        mask = wx.Mask(bmp, bg_colour)
+        bmp.SetMask(mask)
+        shape = DragShape(bmp)
+        shape.pos = (5, 100)
+        shape.text = "Some dragging text"
+        self.shapes.append(shape)
+        """
+        # ancho y alto
+        h = textExtent[1]
+        w = textExtent[0]
+        
+       	#img = cv2.putText(np_array, text , (12,12), cv2.FONT_HERSHEY_PLAIN, 1,  255)
+       	cv2.putText(np_array, text, (5, h-5), cv2.FONT_HERSHEY_PLAIN, fontScale=1.0, color=(255,255,255), thickness=1)
+        
+        # posicion por defecto donde aparece el texto
+        x = 20
+        y = 20
+        
+        # para guardar una imagen del texto y tratarlo como un postit
+        parser = Parser()
+        path_ = parser.saveImage(self.kanban.path, len(self.kanban.postits)+1, np_array)
+        self.kanban.postits.append(Postit(path_, x, y, w, h))
+        self.kanban.save()        
+        
+        self.frame.dc.reInit(self.kanban)
         
     def onChangeColor(self, event):
         if not hasattr(self, "colourData"):
