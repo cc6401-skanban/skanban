@@ -36,6 +36,7 @@ class Kanban(object):
         self.background = background
         self.sizeX = sizeX
         self.sizeY = sizeY
+        self.lines = []
     
     def addPostit(self, p):
         self.postits.append(p)

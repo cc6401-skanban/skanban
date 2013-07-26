@@ -4,6 +4,7 @@
 import wx
 import os
 from dragShape import DragShape
+from Line import Line
 
 #----------------------------------------------------------------------
 
@@ -16,6 +17,8 @@ class DragCanvas(wx.ScrolledWindow):
         self.dragImage = None
         self.dragShape = None
         self.hiliteShape = None
+        self.isDrawingLine = False
+        self.lineCoordinates = []
 
         self.parent = parent
 
@@ -88,6 +91,9 @@ class DragCanvas(wx.ScrolledWindow):
             shape.postit = arrPostIts[x]
             shape.fullscreen = True
             self.shapes.append(shape)
+
+        for line in self.board.lines:
+            self.shapes.append(line)
 
         self.Refresh()
     
@@ -174,6 +180,12 @@ class DragCanvas(wx.ScrolledWindow):
             menu.Append(self.popupID1, "Delete")
             self.PopupMenu(menu)
             menu.Destroy()
+
+
+    def DrawLine(self):
+        self.isDrawingLine = True
+        self.lineCoordinates = []
+        self.SetCursor(wx.StockCursor(wx.CURSOR_CROSS))
             
     def DeleteShape(self, event):        
         dlg = wx.MessageDialog(self, 'Are you sure?',
@@ -196,9 +208,29 @@ class DragCanvas(wx.ScrolledWindow):
 
     # Left mouse button up.
     def OnLeftUp(self, evt):
+
         if not self.dragImage or not self.dragShape:
             self.dragImage = None
             self.dragShape = None
+
+            # Dibujar linea
+            if self.isDrawingLine:
+                if not self.lineCoordinates:
+                    self.lineCoordinates = evt.GetPosition()
+                else:
+                    new_point = evt.GetPosition()
+                    # Dibujar la linea a partir de los puntos
+                    dc = wx.PaintDC(evt.GetEventObject())
+                    #dc.Clear()
+                    line = Line(self.lineCoordinates, new_point)
+                    self.shapes.append(line)
+
+                    # Agregar linea a board (kanban)
+                    self.board.lines.append(line)
+
+                    line.Draw(dc)
+                    self.isDrawingLine = False
+                    self.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
             return
 
         # Hide the image, end dragging, and nuke out the drag image.
