@@ -197,7 +197,7 @@ class DragCanvas(wx.ScrolledWindow):
 
         if val == wx.ID_YES:
             self.shapes.remove(self.delShape)
-            self.board.postits.remove(self.delShape.postit)
+            self.delShape.delete(self.board)
             self.parent.Refresh()
             self.board.save()
 
