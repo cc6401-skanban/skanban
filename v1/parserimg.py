@@ -74,6 +74,8 @@ class Parser(object):
 	        cv2.imshow("img", imgc2)
         	cv2.waitKey()
 	"""
+        #cv2.imshow("img", imgc2)
+        #cv2.waitKey()
         #encontramos las fronteras en la imagen de 0 y 1, cv2.RETR_EXTERNAL devuelve contorno externo, cv2.CHAIN_APPROX_SIMPLE : algoritmo utilizado para detectar contornos
         contours, hierarchy = cv2.findContours(imgc2,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
                              
@@ -89,10 +91,11 @@ class Parser(object):
             # se calcula el area
             area = cv2.contourArea(cnt)
             # area minima para que se considere un post-it
-            min_postit = 3000
+            min_postit = 1000
             
             # si el area es mayor que el area minima y mas chica que el area minima por 20 y es un poligono de 4 lados y es convexo
-            if area>min_postit and area < min_postit*20 and len(cnt) <6 and len(cnt) >=4 and cv2.isContourConvex(cnt):
+            #print area
+            if area>min_postit and area < min_postit*50 and len(cnt) <6 and len(cnt) >=4 and cv2.isContourConvex(cnt):
                 # se obtiene el rectangulo minimo que lo contiene orientado con respecto a la orientacion de los bordes de la imagen 
                 rect = cv2.boundingRect(cnt)
                 # ?
@@ -100,6 +103,7 @@ class Parser(object):
                 #si no esta repetido, se agrega, si no se ignora
                 aux.append(cnt)
                 if not self.isPostitEncontrado(postits, cnt):
+
                     rects.append(rect)                            
                     postits.append(cnt)
 		"""
