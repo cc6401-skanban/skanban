@@ -66,6 +66,7 @@ class windowKanban():
         m_addText = menu.Append(wx.NewId(), "&Agregar Texto", "Agregar texto manualmente al kanban")
         m_changeColor = menu.Append(wx.NewId(), "&Cambiar color fondo", "Cambia el color de fondo de la ventana")
         m_drawLine = menu.Append(wx.NewId(), "&Dibujar Linea", "Dibuja una linea en base a dos coordenadas")
+        m_showOriginal = menu.Append(wx.NewId(), "&Mostrar imagen original", "Muestra la imagen original en gris", wx.ITEM_CHECK)
         #m_addVerticalLine = menu.Append(wx.NewId(), "Agregar linea &Horizontal", "Agrega una linea vertical en la posicion donde se hace clic")
         #m_addHorizontalLine = menu.Append(wx.NewId(), "Agregar linea &Vertical", "Agrega una linea horizontal en la posicion donde se hace clic")
 
@@ -74,6 +75,7 @@ class windowKanban():
         self.frame.Bind(wx.EVT_MENU, self.onAddText, m_addText)
         self.frame.Bind(wx.EVT_MENU, self.onChangeColor, m_changeColor)
         self.frame.Bind(wx.EVT_MENU, self.onDrawLine, m_drawLine)
+        self.frame.Bind(wx.EVT_MENU, self.onShowOriginal, m_showOriginal)
         #self.frame.Bind(wx.EVT_MENU, self.onAddVerticalLine, m_addVerticalLine)
         #self.frame.Bind(wx.EVT_MENU, self.onAddHorizontalLine, m_addHorizontalLine)
         
@@ -291,6 +293,22 @@ class windowKanban():
 
     def onAddHorizontalLine(self, event):
         pass
+
+    def onShowOriginal(self, event):
+        if event.Checked():
+            print "checked"
+            self.frame.dc.isBackgroundActive = True
+            bg_bitmap = wx.Bitmap(self.kanban.resized_path)
+            bg_image = bg_bitmap.ConvertToImage()
+            bg_image = bg_image.ConvertToGreyscale()
+            bg_bitmap = bg_image.ConvertToBitmap()
+            self.frame.dc.bg_bmp = bg_bitmap
+            self.frame.dc.Refresh()
+        else:
+            print "unchecked"
+            self.frame.dc.isBackgroundActive = False
+            self.frame.dc.bg_bmp = None
+            self.frame.dc.Refresh()
 
     def onAbout(self, event):
         # se crea y completa un objeto info

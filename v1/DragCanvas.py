@@ -18,6 +18,7 @@ class DragCanvas(wx.ScrolledWindow):
         self.dragShape = None
         self.hiliteShape = None
         self.isDrawingLine = False
+        self.isBackgroundActive = False
         self.lineCoordinates = []
 
         self.parent = parent
@@ -104,20 +105,22 @@ class DragCanvas(wx.ScrolledWindow):
         pass
 
     # tile the background bitmap
-    #def TileBackground(self, dc):
-    #    sz = self.GetClientSize()
-    #    w = self.bg_bmp.GetWidth()
-    #    h = self.bg_bmp.GetHeight()
-    #    x = 0
-    
-    #    while x < sz.width:
-    #        y = 0
-    #
-    #        while y < sz.height:
-    #            dc.DrawBitmap(self.bg_bmp, x, y)
-    #            y = y + h
-    
-    #        x = x + w
+    def TileBackground(self, dc):
+
+        if self.isBackgroundActive:
+            sz = self.GetClientSize()
+            w = self.bg_bmp.GetWidth()
+            h = self.bg_bmp.GetHeight()
+            x = 0
+        
+            while x < sz.width:
+                y = 0
+        
+                while y < sz.height:
+                    dc.DrawBitmap(self.bg_bmp, x, y)
+                    y = y + h
+        
+                x = x + w
 
 
     # Go through our list of shapes and draw them in whatever place they are.
@@ -142,7 +145,7 @@ class DragCanvas(wx.ScrolledWindow):
             dc = wx.ClientDC(self)
             rect = self.GetUpdateRegion().GetBox()
             dc.SetClippingRect(rect)
-        #self.TileBackground(dc)
+        self.TileBackground(dc)
 
     # Fired whenever a paint event occurs
     def OnPaint(self, evt):
