@@ -41,5 +41,10 @@ Dentro del sistema encontrará un menú superior que le permitirá realizar las 
 
 <b>Cambiar color fondo:</b> Esta opción abrirá una paleta de colores que le permitirá seleccionar un nuevo color de fondo para la ventana de kanban virtual.
 
+<b>Agregar Linea:</b> Esta opción abrirá una paleta de colores que le permitirá seleccionar un nuevo color de fondo para la ventana de kanban virtual.
+
+<b>Agregar Texto:</b> Esta opción permite insertar un texto en el mapa mental..
+
+<b>Ver foto original:</b> Esta opción muestra en escala de grises la foto original utilizada.
 
 <b>Acerca de:</b> Aquí encontrará información sobre la licencia del Software, sobre el equipo de Desarrollo y podrá conocer la versión del software que está utilizando.
