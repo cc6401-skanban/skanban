@@ -9,6 +9,7 @@ import pickle
 import zipfile
 from parserimg import Parser
 from wx.lib.wordwrap import wordwrap # contenedores que albergan texto
+from  wx.lib.intctrl import *
 import wx.lib.agw.cubecolourdialog as CCD # para cambiar color de fondo
 import cv2
 import numpy as np 
@@ -118,8 +119,28 @@ class windowKanban():
         if fd.ShowModal() == wx.ID_CANCEL:
             return
 
+        dlg = MinMaxDialog(self.frame, -1, "Tamaño Post-its", size=(350, 200),
+                         #style=wx.CAPTION | wx.SYSTEM_MENU | wx.THICK_FRAME,
+                         style=wx.DEFAULT_DIALOG_STYLE, # & ~wx.CLOSE_BOX,
+                         )
+
+        dlg.CenterOnScreen()
+
+        # this does not return until the dialog is closed.
+        val = dlg.ShowModal()
+
+        min_postit = int(dlg.min.GetValue())
+        max_postit = int(dlg.max.GetValue())
+
+
+        dlg.Destroy()
+
+        if val != wx.ID_OK:
+            return
+
+
         parser = Parser()
-        kanban = parser.parse(fd.GetPath())
+        kanban = parser.parse(fd.GetPath(), min_postit, max_postit)
 
         self.kanban = kanban
         self.frame.dc.reInit(kanban)
@@ -333,6 +354,116 @@ class windowKanban():
     #    dlg = AboutBox()
    #     dlg.ShowModal()
    #     dlg.Destroy()
+
+class MinMaxDialog(wx.Dialog):
+    def __init__(
+            self, parent, ID, title, size=wx.DefaultSize, pos=wx.DefaultPosition, 
+            style=wx.DEFAULT_DIALOG_STYLE,
+            useMetal=False,
+            ):
+
+        # Instead of calling wx.Dialog.__init__ we precreate the dialog
+        # so we can set an extra style that must be set before
+        # creation, and then we create the GUI object using the Create
+        # method.
+        pre = wx.PreDialog()
+        pre.SetExtraStyle(wx.DIALOG_EX_CONTEXTHELP)
+        pre.Create(parent, ID, title, pos, size, style)
+
+        # This next step is the most important, it turns this Python
+        # object into the real wrapper of the dialog (instead of pre)
+        # as far as the wxPython extension is concerned.
+        self.PostCreate(pre)
+
+        # This extra style can be set after the UI object has been created.
+        if 'wxMac' in wx.PlatformInfo and useMetal:
+            self.SetExtraStyle(wx.DIALOG_EX_METAL)
+
+
+        # Now continue with the normal construction of the dialog
+        # contents
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        label = wx.StaticText(self, -1, "Ingrese tamaño mínimo y máximo de los elementos")
+        sizer.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
+
+        box = wx.BoxSizer(wx.HORIZONTAL)
+
+        label = wx.StaticText(self, -1, "Tamaño Mínimo:")
+        box.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
+
+        text = IntCtrl(self, -1, 1000, size=(80,-1))
+        box.Add(text, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
+        self.min = text
+        #self.min.Bind(wx.EVT_CHAR, self.handle_number)
+
+        sizer.Add(box, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+
+        box = wx.BoxSizer(wx.HORIZONTAL)
+
+        label = wx.StaticText(self, -1, "Tamaño Máximo:")
+        box.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
+
+        text = IntCtrl(self, -1, 50000, size=(80,-1))
+        box.Add(text, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
+        self.max = text
+        #self.max.Bind(wx.EVT_CHAR, self.handle_number)
+
+        sizer.Add(box, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+
+        line = wx.StaticLine(self, -1, size=(20,-1), style=wx.LI_HORIZONTAL)
+        sizer.Add(line, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5)
+
+        btnsizer = wx.StdDialogButtonSizer()
+        
+        
+        btn = wx.Button(self, wx.ID_OK)
+        btn.SetDefault()
+        btnsizer.AddButton(btn)
+        self.btn_ok = btn
+
+        btn = wx.Button(self, wx.ID_CANCEL)
+        btnsizer.AddButton(btn)
+        btnsizer.Realize()
+        self.btn_cancel = btn
+
+        self.Bind(EVT_INT, self.SetTargetMinMax, self.min)
+        self.Bind(EVT_INT, self.SetTargetMinMax, self.max)
+
+        sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+
+        self.SetSizer(sizer)
+        sizer.Fit(self)
+
+    def handle_number(self, event):
+        keycode = event.GetKeyCode()
+
+        if keycode < 255:
+            if chr(keycode).isdigit():
+                event.Skip()
+
+    def SetTargetMinMax( self, event=None ):
+        min = max = None
+
+        if self.min.GetValue():
+            min = self.min.GetValue()
+
+        if self.max.GetValue():
+            max = self.max.GetValue()
+
+        if min >= max:
+            self.max.SetForegroundColour( wx.RED )
+            self.min.SetForegroundColour( wx.RED )
+            self.btn_ok.Disable()
+        else:
+            self.max.SetForegroundColour( wx.BLACK )
+            self.min.SetForegroundColour( wx.BLACK )
+            self.btn_ok.Enable()
+
+
+        self.max.Refresh()
+        self.min.Refresh()
+
 
 class AddPostitPanel(wx.Dialog):
     def __init__(

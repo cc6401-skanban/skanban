@@ -91,11 +91,10 @@ class Parser(object):
             # se calcula el area
             area = cv2.contourArea(cnt)
             # area minima para que se considere un post-it
-            min_postit = 1000
             
             # si el area es mayor que el area minima y mas chica que el area minima por 20 y es un poligono de 4 lados y es convexo
             #print area
-            if area>min_postit and area < min_postit*50 and len(cnt) <6 and len(cnt) >=4 and cv2.isContourConvex(cnt):
+            if area>self.min_postit and area < self.max_postit and len(cnt) <6 and len(cnt) >=4 and cv2.isContourConvex(cnt):
                 # se obtiene el rectangulo minimo que lo contiene orientado con respecto a la orientacion de los bordes de la imagen 
                 rect = cv2.boundingRect(cnt)
                 # ?
@@ -168,7 +167,9 @@ class Parser(object):
         return (w1,h1)
 
 
-    def parse(self,path):
+    def parse(self,path,min_postit=1000,max_postit=50000):
+        self.min_postit = min_postit
+        self.max_postit = max_postit
         titulo = self.getTitulo(path)
         #if os.path.isfile(titulo+'.pkl'):
         #    return Kanban.load(titulo)
