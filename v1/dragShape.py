@@ -35,3 +35,6 @@ class DragShape:
         else:
             return False
 
+    def delete(self, kanban):
+        kanban.postits.remove(self.postit)
+

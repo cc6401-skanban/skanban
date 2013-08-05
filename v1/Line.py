@@ -36,7 +36,7 @@ class Line:
     # Recibe un punto e indica si esta dentro del rectangulo que contiene la imagen
     def HitTest(self, pt):
 
-        pix_tol = 10
+        pix_tol = 5
 
         """m = 1.0 * (self.p1.y - self.p2.y)/(self.p1.x - self.p2.x)
         a = -m
@@ -62,3 +62,6 @@ class Line:
         dc.DrawLine(self.p1[0], self.p1[1], self.p2[0], self.p2[1])
 
         return True
+
+    def delete(self, kanban):
+        kanban.lines.remove(self)
