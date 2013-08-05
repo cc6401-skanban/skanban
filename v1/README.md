@@ -1,5 +1,8 @@
 Instrucciones de Uso
 ======
+Esta aplicación tiene por objetivo manipular mapas mentales a partir de una foto. Su algoritmo consiste en detectar los post-its o cuadrados marcados en la foto, recortarlos y manipularlos independientemente, permitiendo moverlos, y también agregar lineas, texto o color de fondo al mapa. Esto vuelve al mapa portable, ya que se pueden exportar archivos .skb, para poder compartir los mapas.
+Se recomienda utilizar fotos donde los postits se vean bien definidos, y que no haya superposición de éstos. Si existen errores, los post-its pueden borrarse y agregarse manualmente al mapa digital.
+Si utiliza el software, por favor enviarnos feedback a cc6401-equipo-skanban@googlegroups.com
 
 <h2>Requisitos del Sistema</h2>
 
