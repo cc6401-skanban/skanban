@@ -29,6 +29,7 @@ class Kanban(object):
     path = ""
     resized_path = ""
     skb_file = ""
+    serial = 0
 
     def __init__(self, postits=[], title = "", background="", sizeX=800, sizeY=600):
         self.postits = postits
@@ -40,6 +41,7 @@ class Kanban(object):
     
     def addPostit(self, p):
         self.postits.append(p)
+        self.serial+=1
 
     def getPKLPath(self):
         return os.path.join('images',self.title,'data.pkl')

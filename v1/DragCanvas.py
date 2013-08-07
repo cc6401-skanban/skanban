@@ -96,6 +96,7 @@ class DragCanvas(wx.ScrolledWindow):
         for line in self.board.lines:
             self.shapes.append(line)
 
+        #print "reInit Tengo",len(self.board.postits)
         self.Refresh()
     
     # We're not doing anything here, but you might have reason to.
@@ -199,11 +200,13 @@ class DragCanvas(wx.ScrolledWindow):
         val = dlg.ShowModal()
 
         if val == wx.ID_YES:
+            #print "DELETE tengo",len(self.board.postits)
             self.shapes.remove(self.delShape)
             self.board.postits.remove(self.delShape.postit)
             #self.delShape.delete(self.board)
             self.parent.Refresh()
             self.board.save()
+            #print "DELETE tengo",len(self.board.postits)
 
 
 

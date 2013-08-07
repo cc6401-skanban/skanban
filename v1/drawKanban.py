@@ -59,10 +59,11 @@ class drawKanban():
     	x,y,w,h = rect
     	img = cv2.getRectSubPix(self.img_clean, (w, h), (x+w/2, y+h/2))  
 
-
+        print "tengo",len(self.kanban.postits)
         path_ = self.saveImage(self.kanban.path, len(self.kanban.postits)+1, img)
         self.kanban.postits.append(Postit(path_, x, y, w, h))
         self.kanban.save()
+        print "tengo",len(self.kanban.postits)
         
         self.dc.reInit(self.kanban)
         self.adding = False

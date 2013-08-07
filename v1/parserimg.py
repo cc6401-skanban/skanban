@@ -286,6 +286,7 @@ class Parser(object):
             #cv2.waitKey()      
             i+=1
         my_kanban = Kanban(kanban, self.getTitulo(path), "#ffffff", 800, 600)
+        my_kanban.serial = len(kanban)
         my_kanban.resized_path = resized_path
         my_kanban.path = path
         my_kanban.sizeX = w1

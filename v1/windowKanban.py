@@ -574,9 +574,12 @@ class AddPostitPanel(wx.Dialog):
 
         parser = Parser()
         img = parser.removeBackground(img,x,y,w,h,postits[0])
-        path_ = parser.saveImage(self.kanban.path, len(self.kanban.postits)+1, img)
-        self.kanban.postits.append(Postit(path_, x, y, w, h))
+        path_ = parser.saveImage(self.kanban.path, self.kanban.serial, img)
+        #print "CUT 1 tengo",len(self.kanban.postits)
+        self.kanban.addPostit(Postit(path_, x, y, w, h))
+        #self.kanban.postits.append(Postit(path_, x, y, w, h))
         self.kanban.save()
+        #print "CUT 2 tengo",len(self.kanban.postits)
         
         self.parent.dc.reInit(self.kanban)
         self.Destroy()
